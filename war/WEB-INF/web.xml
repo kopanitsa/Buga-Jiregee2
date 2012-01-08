@@ -17,8 +17,13 @@
   </servlet-mapping>
   
   <!-- Default page to serve -->
+  <!--
   <welcome-file-list>
     <welcome-file>BugaJiregee2.html</welcome-file>
+  </welcome-file-list>
+  -->
+  <welcome-file-list>
+    <welcome-file>base.html</welcome-file>
   </welcome-file-list>
 
 </web-app>
