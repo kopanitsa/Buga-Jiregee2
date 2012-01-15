@@ -117,14 +117,14 @@ public class GameServiceImpl extends RemoteServiceServlet
     }
     
 //    // ---------DEBUG-----------
-//    Query qAll = pm.newQuery(Game.class);
+//    Query qAll = pm.newQuery(BugaJiregeeGame.class);
 //    Collection cAll = (Collection)qAll.execute();
 //    mLogger.info("[Game number]All:"+cAll.size());
-//    Query q = pm.newQuery(Game.class, "id == " + gameId);
+//    Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
 //    Collection c = (Collection)q.execute();
 //    mLogger.info("[Game number]filter:"+c.size());
 //    long prevGameId = gameId - 1;
-//    Query qp = pm.newQuery(Game.class, "id == " + prevGameId);
+//    Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
 //    Collection cp = (Collection)qp.execute();
 //    mLogger.info("[Game number]filter:"+cp.size());
 //    // ---------DEBUG-----------

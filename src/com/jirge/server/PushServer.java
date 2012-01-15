@@ -30,7 +30,6 @@ public class PushServer {
 
   private static final Logger logger = Logger.getLogger(PushServer.class.getName());
   private static final Method dummyMethod = getDummyMethod();
-  private static final String APP_KEY_PREFIX = "buga-jiregee-";
 
   private static SerializationPolicy serializationPolicy = createPushSerializationPolicy();
 
@@ -53,6 +52,7 @@ public class PushServer {
     String encodedMessage = encodeMessage(msg);
     for (String player : playerKeys) {
       String key = getAppKeyForPlayer(player);
+
       try {
         getChannelService().sendMessage(new ChannelMessage(key, encodedMessage));
       } catch (Exception e) {
@@ -81,7 +81,7 @@ public class PushServer {
    * @return the client channel id
    */
   public static String createChannel(Player player) {
-    String channelId = getChannelService().createChannel(APP_KEY_PREFIX + player.getKey());
+    String channelId = getChannelService().createChannel(player.getKey());
     logger.info("Returning new channel " + channelId + " for player " + player);
     return channelId;
   }
@@ -117,8 +117,7 @@ public class PushServer {
   }
 
   private static String getAppKeyForPlayer(String player) {
-    logger.info("PushServer#getAppKeyForPlayer player:"+player);
-    return APP_KEY_PREFIX + player;
+    return player;
   }
 
   private static String encodeMessage(Message msg) {

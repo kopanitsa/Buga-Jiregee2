@@ -10,6 +10,7 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Extension;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeGame implements Serializable {
@@ -24,8 +25,9 @@ public class BugaJiregeeGame implements Serializable {
         COMPLETE
     }
     
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@PrimaryKey private Long id;
+    @PrimaryKey
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    private Long id;
 
 	@Persistent
 	private State state;
