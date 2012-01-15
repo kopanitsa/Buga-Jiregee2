@@ -1,0 +1,6 @@
+<queue-entries>
+  <queue>
+    <name>deferred</name>
+    <rate>50/s</rate>
+  </queue>
+</queue-entries>

@@ -1,28 +1,33 @@
 package com.jirge.client;
 
-import com.google.gwt.event.dom.client.*;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
+import java.util.logging.Logger;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.jirge.shared.LoginResults;
 
-/**
- * Searches for a new Game.
- *
- * @author Toby Reyelts
- */
 public class FindGamePanel extends VerticalPanel {
 
-  TextBox nameTextBox;
-  Label statusText;
-//okada  GameServiceAsync gameService;
-  Main main;
-  boolean findingGame;
+  private final Logger mLogger = Logger.getLogger(this.getClass().getName());
+  TextBox mNameTextBox;
+  Label mStatusText;
+  GameServiceAsync mGameService;
+  Main mMain;
+  boolean mFindingGame;
 
   FindGamePanel(Main main) {
-    this.main = main;
-  //okada    gameService = GameService.App.getInstance();
+    mMain = main;
+    mGameService = GameService.App.getInstance();
 
     HorizontalPanel firstRow = new HorizontalPanel();
     add(firstRow);
@@ -35,9 +40,9 @@ public class FindGamePanel extends VerticalPanel {
     Label name = new Label("Your Name");
     name.addStyleDependentName("nameLabel");
     secondRow.add(name);
-    secondRow.add(nameTextBox = new TextBox());
+    secondRow.add(mNameTextBox = new TextBox());
     Button loginButton = new Button("Join a Game");
-    nameTextBox.addKeyPressHandler(new KeyPressHandler() {
+    mNameTextBox.addKeyPressHandler(new KeyPressHandler() {
       public void onKeyPress(KeyPressEvent event) {
         if (event.getCharCode() == KeyCodes.KEY_ENTER) {
           findGame();
@@ -53,12 +58,7 @@ public class FindGamePanel extends VerticalPanel {
 
     HorizontalPanel thirdRow = new HorizontalPanel();
     add(thirdRow);
-    thirdRow.add(statusText = new Label());
-    DeferredCommand.addCommand(new Command() {
-      public void execute() {
-        nameTextBox.setFocus(true);          
-      }
-    });
+    thirdRow.add(mStatusText = new Label());
   }
 
   private void findGame() {
@@ -66,34 +66,35 @@ public class FindGamePanel extends VerticalPanel {
   }
 
   private void findGame(Long gameId, final int numAttempts) {
-    if (findingGame) {
+    mLogger.warning("findGame gameId:"+gameId);
+    if (mFindingGame) {
       return;
     }
-    findingGame = true;
-    statusText.setText("Looking for a game...");
-    final String name = nameTextBox.getText();
-//okada
-//    gameService.login(name, gameId, Main.getNumRounds(), Main.getWaitTime(),
-//      new AsyncCallback<LoginResults>() {
-//      public void onFailure(Throwable caught) {
-//        findingGame = false;
-//        Window.alert("Failure: " + caught.getMessage());
-//      }
-//
-//      public void onSuccess(LoginResults results) {
-//        findingGame = false;
-//        statusText.setText("");
-//        Long gameId = results.getGameId();
-//        if (gameId != null) {
-//          if (numAttempts < 20) {
-//            findGame(gameId, numAttempts + 1);
-//          } else {
-//            statusText.setText("Too many attempts to find a game");
-//          }
-//        } else {
-//          main.loginComplete(name, results);
-//        }
-//      }
-//    });
+    mFindingGame = true;
+    mStatusText.setText("Looking for a game...");
+    final String name = mNameTextBox.getText();
+
+    mGameService.login(name, gameId, new AsyncCallback<LoginResults>() {
+      public void onFailure(Throwable caught) {
+        mFindingGame = false;
+        Window.alert("Failure: " + caught.getMessage());
+      }
+
+      public void onSuccess(LoginResults results) {
+        mLogger.info("FindGamePanel#onSuccess(login)");
+        mFindingGame = false;
+        mStatusText.setText("");
+        Long gameId = results.getGameId();
+        if (gameId != null) {
+          if (numAttempts < 20) {
+            findGame(gameId, numAttempts + 1);
+          } else {
+            mStatusText.setText("Too many attempts to find a game");
+          }
+        } else {
+          mMain.loginComplete(name, results);
+        }
+      }
+    });
   }
 }
