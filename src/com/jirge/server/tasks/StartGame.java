@@ -1,17 +1,18 @@
 package com.jirge.server.tasks;
 
-import com.jirge.server.Game;
-import com.jirge.server.GameServiceImpl;
-import com.jirge.server.PushServer;
-import com.jirge.shared.message.GameBeginMessage;
-import com.jirge.util.JdoUtil;
-import com.newatlanta.appengine.taskqueue.Deferred;
+import java.io.IOException;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.servlet.ServletException;
-import java.io.IOException;
+
+import com.jirge.server.BugaJiregeeGame;
+import com.jirge.server.GameServiceImpl;
+import com.jirge.server.PushServer;
+import com.jirge.shared.message.GameBeginMessage;
+import com.jirge.util.JdoUtil;
+import com.newatlanta.appengine.taskqueue.Deferred;
 
 public class StartGame implements Deferred.Deferrable {
   private final long gameId;
@@ -23,16 +24,16 @@ public class StartGame implements Deferred.Deferrable {
     PersistenceManager pm = JdoUtil.getPm();
     Transaction tx = pm.currentTransaction();
 
-    Game game;
+    BugaJiregeeGame game;
     try {
       tx.begin();
-      Query q = pm.newQuery(Game.class, "id == " + gameId);
-      game = JdoUtil.queryFirst(q, Game.class);
-     if (game.getState() == Game.State.IN_PROGRESS) {
+      Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
+      game = JdoUtil.queryFirst(q, BugaJiregeeGame.class);
+     if (game.getState() == BugaJiregeeGame.State.IN_PROGRESS) {
         // Already started, nothing to do.
         return;
       }
-      game.setState(Game.State.IN_PROGRESS);
+      game.setState(BugaJiregeeGame.State.IN_PROGRESS);
       tx.commit();
     } finally {
       if (tx.isActive()) {

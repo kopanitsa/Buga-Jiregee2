@@ -50,7 +50,7 @@ public class GameServiceImpl extends RemoteServiceServlet
     HttpSession session = getThreadLocalRequest().getSession();
     session.setAttribute(GAME_ID, gameId);
 
-    Game game = getGameById(gameId);
+    BugaJiregeeGame game = getGameById(gameId);
     // FIXME need to select deer or dog
     Player player = new Player(BugaJiregeePiece.TYPE_DEER);
     player.setName(name);
@@ -88,7 +88,7 @@ public class GameServiceImpl extends RemoteServiceServlet
   }
 
   public List<Message> confirmLogin() {
-      Game game = getGameForSession();
+      BugaJiregeeGame game = getGameForSession();
       List<Message> messages = new ArrayList<Message>();
       // TODO
       messages.add(new TmpMessage());
@@ -101,7 +101,7 @@ public class GameServiceImpl extends RemoteServiceServlet
 
     try {
       tx.begin();
-      Game game = new Game(gameId);
+      BugaJiregeeGame game = new BugaJiregeeGame(gameId);
       pm.makePersistent(game);
       mLogger.info("GameServerImpl:tryCreateGame"+gameId);
       tx.commit();
@@ -132,7 +132,7 @@ public class GameServiceImpl extends RemoteServiceServlet
     return true;
   }
 
-  private Game getGameForSession() {
+  private BugaJiregeeGame getGameForSession() {
     Long gameId = (Long)getThreadLocalRequest().getSession().getAttribute(GAME_ID);
     return getGameById(gameId);
   }
@@ -145,10 +145,10 @@ public class GameServiceImpl extends RemoteServiceServlet
     return url("/tasks/deferred");
   }
 
-  private static Game getGameById(Long gameId) {
+  private static BugaJiregeeGame getGameById(Long gameId) {
     PersistenceManager pm = JdoUtil.getPm();
-    Query q = pm.newQuery(Game.class, "id == " + gameId);
-    return JdoUtil.queryFirst(q, Game.class);
+    Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
+    return JdoUtil.queryFirst(q, BugaJiregeeGame.class);
   }
 
   /**
@@ -157,13 +157,13 @@ public class GameServiceImpl extends RemoteServiceServlet
    */
   private long queryForLargestGameId() {
     PersistenceManager pm = JdoUtil.getPm();
-    Query q = pm.newQuery(Game.class);
+    Query q = pm.newQuery(BugaJiregeeGame.class);
     q.setOrdering("id descending");
     Collection results = (Collection)q.execute();
     if (results.size() == 0) {
       return 0;
     }
-    return ((Game)results.iterator().next()).getId();
+    return ((BugaJiregeeGame)results.iterator().next()).getId();
   }
 
   /**
@@ -185,8 +185,8 @@ public class GameServiceImpl extends RemoteServiceServlet
         Transaction tx = pm.currentTransaction();
         try {
           tx.begin();
-          Game game = getGameById(gameId);
-          if (game.getState() == Game.State.NEW) {
+          BugaJiregeeGame game = getGameById(gameId);
+          if (game.getState() == BugaJiregeeGame.State.NEW) {
             return gameId;
           }
           tx.commit();
