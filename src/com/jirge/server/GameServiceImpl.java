@@ -45,14 +45,14 @@ public class GameServiceImpl extends RemoteServiceServlet
   public LoginResults login(final String name, Long gameId) {
       mLogger.info("GameServiceImpl#login name:"+name+" id:"+gameId);
     if (gameId == null) {
-        gameId = reserveGame(5);
-//        gameId = reserveGame(waitTime);
+        gameId = reserveGame(5); // temporary value
     }
     HttpSession session = getThreadLocalRequest().getSession();
     session.setAttribute(GAME_ID, gameId);
 
     Game game = getGameById(gameId);
-    Player player = new Player();
+    // FIXME need to select deer or dog
+    Player player = new Player(BugaJiregeePiece.TYPE_DEER);
     player.setName(name);
     session.setAttribute(PLAYER, player);
 
@@ -116,18 +116,18 @@ public class GameServiceImpl extends RemoteServiceServlet
       }
     }
     
-    // ---------DEBUG-----------
-    Query qAll = pm.newQuery(Game.class);
-    Collection cAll = (Collection)qAll.execute();
-    mLogger.info("[Game number]All:"+cAll.size());
-    Query q = pm.newQuery(Game.class, "id == " + gameId);
-    Collection c = (Collection)q.execute();
-    mLogger.info("[Game number]filter:"+c.size());
-    long prevGameId = gameId - 1;
-    Query qp = pm.newQuery(Game.class, "id == " + prevGameId);
-    Collection cp = (Collection)qp.execute();
-    mLogger.info("[Game number]filter:"+cp.size());
-    // ---------DEBUG-----------
+//    // ---------DEBUG-----------
+//    Query qAll = pm.newQuery(Game.class);
+//    Collection cAll = (Collection)qAll.execute();
+//    mLogger.info("[Game number]All:"+cAll.size());
+//    Query q = pm.newQuery(Game.class, "id == " + gameId);
+//    Collection c = (Collection)q.execute();
+//    mLogger.info("[Game number]filter:"+c.size());
+//    long prevGameId = gameId - 1;
+//    Query qp = pm.newQuery(Game.class, "id == " + prevGameId);
+//    Collection cp = (Collection)qp.execute();
+//    mLogger.info("[Game number]filter:"+cp.size());
+//    // ---------DEBUG-----------
     
     return true;
   }

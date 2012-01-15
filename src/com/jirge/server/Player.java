@@ -1,10 +1,18 @@
 package com.jirge.server;
 
-import javax.jdo.annotations.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 import com.jirge.shared.PlayerValue;
 
-import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType= IdentityType.APPLICATION)
@@ -17,6 +25,20 @@ public class Player implements Serializable {
 
   @Persistent
   private String name;
+
+  @Persistent
+  private List<BugaJiregeePiece> pieces;
+
+  public Player(int type) {
+      switch (type) {
+      case BugaJiregeePiece.TYPE_DEER:
+          this.pieces = new ArrayList<BugaJiregeePiece>(2);
+          break;
+      case BugaJiregeePiece.TYPE_DOG:
+          this.pieces = new ArrayList<BugaJiregeePiece>(24);
+          break;
+      }
+  }
 
   public String getKey() {
     return key;
@@ -54,3 +76,5 @@ public class Player implements Serializable {
     return result;
   }
 }
+
+
