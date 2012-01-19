@@ -35,6 +35,9 @@ public class BugaJiregeeGame implements Serializable {
 	@Persistent
 	private List<Player> players;
 
+	@Persistent
+	private int currentPlayerIndex;
+
 	//@Persistent private List<Move> moves;
 	
 	@Persistent
@@ -48,7 +51,42 @@ public class BugaJiregeeGame implements Serializable {
 	    this.state = State.NEW;
 	    this.timeCreated = new Date(System.currentTimeMillis());
 		this.players = new ArrayList<Player>(2);
+		this.currentPlayerIndex = 0;
 		this.board = new BugaJiregeeBoard();
+	}
+
+
+	//
+	// APIs
+	//
+
+	public void start() {
+		// TODO implement : initialize the position of pieces
+	}
+
+	public List<BugaJiregeePiece> getMovablePieces() {
+		List<BugaJiregeePiece> movablePieces = new ArrayList<BugaJiregeePiece>();
+		List<BugaJiregeePiece> pieces = this.players.get(this.currentPlayerIndex).getPieces();
+		for (BugaJiregeePiece piece : pieces) {
+			List<BugaJiregeePoint> accessiblePoints = getAccessiblePoints(piece);
+			if (!accessiblePoints.isEmpty()) {
+				movablePieces.add(piece);
+			}
+		}
+		return movablePieces;
+	}
+
+	public List<BugaJiregeePoint> getAccessiblePoints(BugaJiregeePiece piece) {
+		List<BugaJiregeePoint> accessiblePoints = new ArrayList<BugaJiregeePoint>();
+		BugaJiregeePoint point = piece.getPoint();
+		// TODO implement
+		return accessiblePoints;
+	}
+
+	public BugaJiregeePiece movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
+		BugaJiregeePiece removedPiece = null;
+		// TODO implement
+		return removedPiece;
 	}
 
 	// Setters & Getters
@@ -84,5 +122,5 @@ public class BugaJiregeeGame implements Serializable {
 	public Date getTimeCreated() {
 	    return timeCreated;
 	}
-	
+
 }

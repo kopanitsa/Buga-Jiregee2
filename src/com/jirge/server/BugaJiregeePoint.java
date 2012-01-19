@@ -29,4 +29,10 @@ public class BugaJiregeePoint implements Serializable {
 		this.piece = piece;
 	}
 
+	public void setPath(BugaJiregeePoint upPoint, BugaJiregeePoint downPoint, BugaJiregeePoint leftPoint,
+			BugaJiregeePoint rightPoint, BugaJiregeePoint upleftPoint, BugaJiregeePoint uprightPoint,
+			BugaJiregeePoint downleftPoint, BugaJiregeePoint downrightPoint) {
+		// TODO Auto-generated method stub		
+	}
+
 }

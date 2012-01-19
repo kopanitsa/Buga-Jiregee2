@@ -75,6 +75,9 @@ public class Player implements Serializable {
     result = 31 * result + (name != null ? name.hashCode() : 0);
     return result;
   }
+ 
+  public List<BugaJiregeePiece> getPieces() {
+	  return this.pieces;
+  }
+
 }
-
-
