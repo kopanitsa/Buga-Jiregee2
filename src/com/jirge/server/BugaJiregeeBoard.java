@@ -1,90 +1,81 @@
 package com.jirge.server;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeBoard implements Serializable {
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-	private String key;
+	/**
+	 * 0    : Out of board,
+	 * 1-35 : On the board,
+	 * 36   : Stocks (for Dog pieces)
+	 */
+	private static final int NUM_OF_POINTS = (6 + 5 * 5 + 4) + 2;
 
-	@Persistent private BugaJiregeePoint points[];
+	private BugaJiregeePoint points[];
 
 	public BugaJiregeeBoard() {
 		initPoints();
 		initPaths();
 	}
 
-	public BugaJiregeePoint getPoint(int x, int y) {
-		if (x >= 0 && x < 5 && y >= 0 && y < 9) {
-			return this.points[x + y * 5];
+	public BugaJiregeePoint getPoint(int index) {
+		if (index >= 0 && index < NUM_OF_POINTS) {
+			return this.points[index];
 		} else {
 			return null;
 		}
 	}
 
-	public BugaJiregeePiece getPiece(int x, int y) {
-		BugaJiregeePoint point = getPoint(x, y);
-		if (point != null) {
-			return point.getPiece();
-		} else {
-			return null;
-		}
-	}
+	//
 
 	private void initPoints() {
-		this.points = new BugaJiregeePoint[5 * 9];
-		this.points[ 0] = new BugaJiregeePoint();
-		this.points[ 1] = null;
-		this.points[ 2] = new BugaJiregeePoint();
-		this.points[ 3] = null;
-		this.points[ 4] = new BugaJiregeePoint();
-		this.points[ 5] = null;
-		this.points[ 6] = new BugaJiregeePoint();
-		this.points[ 7] = new BugaJiregeePoint();
-		this.points[ 8] = new BugaJiregeePoint();
-		this.points[ 9] = null;
-		for (int i = 10; i < 10 + 25; i++) {
-			this.points[i] = new BugaJiregeePoint();
+		this.points = new BugaJiregeePoint[NUM_OF_POINTS];
+		for (int i = 0; i < NUM_OF_POINTS; i++) {
+			this.points[i] = new BugaJiregeePoint(i);
 		}
-		this.points[35] = null;
-		this.points[36] = new BugaJiregeePoint();
-		this.points[37] = new BugaJiregeePoint();
-		this.points[38] = new BugaJiregeePoint();
-		this.points[39] = null;
-		this.points[40] = null;
-		this.points[41] = null;
-		this.points[42] = new BugaJiregeePoint();
-		this.points[43] = null;
-		this.points[44] = null;
 	}
 
 	private void initPaths() {
 		BugaJiregeePoint p[] = this.points;
-		p[ 0].setPath( null,  null,  null, p[ 2],  null,  null,  null, p[ 6]);
-		p[ 2].setPath( null, p[ 7], p[ 0], p[ 4],  null,  null,  null,  null);
-		p[ 4].setPath( null,  null, p[ 2],  null,  null,  null, p[ 8],  null);
-		p[ 6].setPath( null,  null,  null, p[ 7], p[ 0],  null,  null, p[12]);
-		p[ 7].setPath(p[ 2], p[12], p[ 6], p[ 8],  null,  null,  null,  null);
-		p[ 8].setPath( null,  null, p[ 7],  null,  null, p[ 4], p[12],  null);
-		p[10].setPath( null, p[15],  null, p[11],  null,  null,  null, p[16]);
-		p[11].setPath( null, p[16], p[10], p[12],  null,  null,  null,  null);
-		p[12].setPath( p[7], p[17], p[11], p[13], p[ 6], p[ 8], p[16], p[18]);
-		p[13].setPath( null, p[18], p[12], p[14],  null,  null,  null,  null);
-		p[14].setPath( null, p[19], p[13],  null,  null,  null, p[18],  null);
-		// TODO implement
+
+		/* p[1]-p[6] */
+		/*              UP,    DOWN,  LEFT, RIGHT,   U_L,   U_R,   D_L,   D_R */
+		p[ 1].setPaths( null,  null,  null, p[ 2],  null,  null,  null, p[ 4]);
+		p[ 2].setPaths( null, p[ 5], p[ 1], p[ 3],  null,  null,  null,  null);
+		p[ 3].setPaths( null,  null, p[ 2],  null,  null,  null, p[ 6],  null);
+		p[ 4].setPaths( null,  null,  null, p[ 5], p[ 1],  null,  null, p[ 9]);
+		p[ 5].setPaths(p[ 2], p[ 9], p[ 4], p[ 6],  null,  null,  null,  null);
+		p[ 6].setPaths( null,  null, p[ 5],  null,  null, p[ 3], p[ 9],  null);
+
+		/* p[7]-p[31] */
+		for (int i = 7; i < 32; i++) {
+			if (i > 11) p[i].setPath(BugaJiregeePoint.D_UP, p[i - 5]);
+			if (i < 27) p[i].setPath(BugaJiregeePoint.D_DOWN, p[i + 5]);
+			if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_LEFT, p[i - 1]);
+			if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_RIGHT, p[i + 1]);
+			if (i % 2 == 1) {
+				if (i > 11) {
+					if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_UP_LEFT, p[i - 6]);
+					if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_UP_RIGHT, p[i - 4]);
+				}
+				if (i < 27) {
+					if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_DOWN_LEFT, p[i + 4]);
+					if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_DOWN_RIGHT, p[i + 6]);
+				}
+			}
+		}
+		p[ 9].setPath(BugaJiregeePoint.D_UP_LEFT,    p[ 4]);
+		p[ 9].setPath(BugaJiregeePoint.D_UP,         p[ 5]);
+		p[ 9].setPath(BugaJiregeePoint.D_UP_RIGHT,   p[ 6]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN_LEFT,  p[32]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN,       p[33]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN_RIGHT, p[34]);
+
+		/* p[32]-p[35] */
+		/*              UP,    DOWN,  LEFT, RIGHT,   U_L,   U_R,   D_L,   D_R */
+		p[32].setPaths( null,  null,  null, p[33],  null, p[29],  null, p[35]);
+		p[33].setPaths(p[29], p[35], p[32], p[34],  null,  null,  null,  null);
+		p[34].setPaths( null,  null, p[33],  null, p[29],  null, p[35],  null);
+		p[35].setPaths(p[33],  null,  null,  null, p[32], p[34],  null,  null);
 	}
 }

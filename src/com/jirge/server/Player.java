@@ -32,10 +32,16 @@ public class Player implements Serializable {
   public Player(int type) {
       switch (type) {
       case BugaJiregeePiece.TYPE_DEER:
-          this.pieces = new ArrayList<BugaJiregeePiece>(2);
+          this.pieces = new ArrayList<BugaJiregeePiece>();
+          for (int i = 0; i < BugaJiregeePiece.NUM_OF_DEERS; i++) {
+        	  this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DEER));
+          }
           break;
       case BugaJiregeePiece.TYPE_DOG:
-          this.pieces = new ArrayList<BugaJiregeePiece>(24);
+          this.pieces = new ArrayList<BugaJiregeePiece>();
+          for (int i = 0; i < BugaJiregeePiece.NUM_OF_DOGS; i++) {
+        	  this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DOG));
+          }
           break;
       }
   }
