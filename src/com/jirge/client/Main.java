@@ -1,20 +1,17 @@
 package com.jirge.client;
 
+import java.util.logging.Logger;
+
+import com.google.gwt.appengine.channel.client.Channel;
+import com.google.gwt.appengine.channel.client.ChannelFactory;
+import com.google.gwt.appengine.channel.client.SocketError;
+import com.google.gwt.appengine.channel.client.SocketListener;
+import com.google.gwt.appengine.channel.client.ChannelFactory.ChannelCreatedCallback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamFactory;
-import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.jirge.client.channel.Channel;
-import com.jirge.client.channel.ChannelFactory;
-import com.jirge.client.channel.SocketListener;
 import com.jirge.shared.LoginResults;
-import com.jirge.shared.message.Message;
-
-import java.util.List;
-import java.util.logging.Logger;
 
 public class Main implements EntryPoint {
 
@@ -44,32 +41,29 @@ public class Main implements EntryPoint {
     mLogger.info("Main#loginComplete");
     final JirgeBoard board = new JirgeBoard(playerName, results);
 
-    Channel channel = ChannelFactory.createChannel(results.getChannelId());
-    channel.open(new SocketListener() {
-      public void onOpen() {
-        mGameService.confirmLogin(new AsyncCallback<List<Message>>() {
-          public void onFailure(Throwable caught) {
-            Window.alert(caught.getMessage());
-          }
-
-          public void onSuccess(List<Message> messages) {
-            for (Message msg : messages) {
-                board.receiveMsg(msg);
+    ChannelFactory.createChannel(results.getChannelId(), new ChannelCreatedCallback() {
+        @Override
+        public void onChannelCreated(Channel channel) {
+          channel.open(new SocketListener() {
+            @Override
+            public void onOpen() {
+              Window.alert("Channel opened!");
             }
-          }
-        });
-      }
-
-      public void onMessage(String encodedData) {
-        try {
-          SerializationStreamReader reader = mPushServiceStreamFactory.createStreamReader(encodedData);
-          Message message = (Message) reader.readObject();
-          board.receiveMsg(message);
-        } catch (SerializationException e) {
-          throw new RuntimeException("Unable to deserialize " + encodedData, e);
+            @Override
+            public void onMessage(String message) {
+              Window.alert("Received: " + message);
+            }
+            @Override
+            public void onError(SocketError error) {
+              Window.alert("Error: " + error.getDescription());
+            }
+            @Override
+            public void onClose() {
+              Window.alert("Channel closed!");
+            }
+          });
         }
-      }
-    });
+      });
 
     mRoot.remove(mFindGamePanel);
     mRoot.add(board);

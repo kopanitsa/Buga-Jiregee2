@@ -116,18 +116,18 @@ public class GameServiceImpl extends RemoteServiceServlet
       }
     }
     
-//    // ---------DEBUG-----------
-//    Query qAll = pm.newQuery(BugaJiregeeGame.class);
-//    Collection cAll = (Collection)qAll.execute();
-//    mLogger.info("[Game number]All:"+cAll.size());
-//    Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
-//    Collection c = (Collection)q.execute();
-//    mLogger.info("[Game number]filter:"+c.size());
-//    long prevGameId = gameId - 1;
-//    Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
-//    Collection cp = (Collection)qp.execute();
-//    mLogger.info("[Game number]filter:"+cp.size());
-//    // ---------DEBUG-----------
+    // ---------DEBUG-----------
+    Query qAll = pm.newQuery(BugaJiregeeGame.class);
+    Collection cAll = (Collection)qAll.execute();
+    mLogger.warning("[Game number]All:"+cAll.size());
+    Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
+    Collection c = (Collection)q.execute();
+    mLogger.warning("[Game number]filter:"+c.size());
+    long prevGameId = gameId - 1;
+    Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
+    Collection cp = (Collection)qp.execute();
+    mLogger.warning("[Game number]filter:"+cp.size());
+    // ---------DEBUG-----------
     
     return true;
   }

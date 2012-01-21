@@ -30,7 +30,7 @@ public class PushServer {
 
   private static final Logger logger = Logger.getLogger(PushServer.class.getName());
   private static final Method dummyMethod = getDummyMethod();
-
+  private static final String APP_KEY_PREFIX = "jirge-";
   private static SerializationPolicy serializationPolicy = createPushSerializationPolicy();
 
   public static void sendMessage(List<Player> players, Message msg) {
@@ -81,8 +81,8 @@ public class PushServer {
    * @return the client channel id
    */
   public static String createChannel(Player player) {
-    String channelId = getChannelService().createChannel(player.getKey());
-    logger.info("Returning new channel " + channelId + " for player " + player);
+    String channelId = getChannelService().createChannel(APP_KEY_PREFIX + player.getName());
+    logger.warning("Returning new channel " + channelId + " for player " + player.getName());
     return channelId;
   }
 
