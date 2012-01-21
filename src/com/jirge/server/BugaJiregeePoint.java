@@ -83,7 +83,7 @@ public class BugaJiregeePoint implements Serializable {
 	}
 
 	public Integer getPathDirection(BugaJiregeePoint point) {
-		// FIXME: use cross-referecnce (if any)
+		// TODO: use cross-referecnce (if any)
 		Set<Integer> keySet = this.paths.keySet();
 		Iterator<Integer> itr = keySet.iterator();
 		while (itr.hasNext()) {

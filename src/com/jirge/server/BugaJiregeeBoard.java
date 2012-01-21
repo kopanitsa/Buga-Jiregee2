@@ -1,6 +1,8 @@
 package com.jirge.server;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -41,6 +43,16 @@ public class BugaJiregeeBoard implements Serializable {
 		} else {
 			return null;
 		}
+	}
+
+	public List<BugaJiregeePoint> getEmptyPoints() {
+		List<BugaJiregeePoint> emptyPoints = new ArrayList<BugaJiregeePoint>();
+		for (int i = 0; i < this.points.length; i++) {
+			if (this.points[i].getPiece() == null) {
+				emptyPoints.add(this.points[i]);
+			}
+		}
+		return emptyPoints;
 	}
 
 	//

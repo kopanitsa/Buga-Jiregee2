@@ -89,6 +89,7 @@ public class BugaJiregeePiece implements Serializable {
 
 	public void setPoint(BugaJiregeePoint point) {
 		this.point = point;
+		this.point.setPiece(this);
 	}
 
 	public int getType() {

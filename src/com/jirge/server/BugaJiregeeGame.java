@@ -25,10 +25,7 @@ public class BugaJiregeeGame implements Serializable {
     }
 
 	private static final int[] INIT_DEER_POINTS = {9, 29};
-
-	private static final int[] INIT_DOG_POINTS = {13, 14, 15, 18, 20, 23, 24, 25,		// 8 pieces on board
-												  36, 36, 36, 36, 36, 36, 36, 36,
-												  36, 36, 36, 36, 36, 36, 36, 36, 36};	// 17 pieces stocked
+	private static final int[] INIT_DOG_POINTS  = {13, 14, 15, 18, 20, 23, 24, 25};		// 8 pieces on board
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -47,6 +44,9 @@ public class BugaJiregeeGame implements Serializable {
 	
 	@Persistent
 	private BugaJiregeeBoard board;
+
+	@Persistent
+	private List<BugaJiregeePiece> stockedDogPieces;
 
 	@Persistent
 	private Date timeCreated;
@@ -71,26 +71,62 @@ public class BugaJiregeeGame implements Serializable {
 	}
 
 	public List<BugaJiregeePiece> getMovablePieces() {
+		Player currentPlayer = this.players.get(this.currentPlayerIndex);
 		List<BugaJiregeePiece> movablePieces = new ArrayList<BugaJiregeePiece>();
-		List<BugaJiregeePiece> pieces = this.players.get(this.currentPlayerIndex).getPieces();
+		List<BugaJiregeePiece> pieces = currentPlayer.getPieces();
 		for (BugaJiregeePiece piece : pieces) {
 			List<BugaJiregeePoint> accessiblePoints = getAccessiblePoints(piece);
 			if (!accessiblePoints.isEmpty()) {
 				movablePieces.add(piece);
 			}
 		}
+		if (currentPlayer.getType() == BugaJiregeePiece.TYPE_DOG) {
+			for (BugaJiregeePiece stockedPiece : this.stockedDogPieces) {
+				movablePieces.add(stockedPiece);
+			}
+		}
 		return movablePieces;
 	}
 
+	public BugaJiregeePiece getPieceByPointIndex(int pointIndex) {
+		if (pointIndex >= 0 && pointIndex < 36) {	// TODO : not to use the magic number.
+			BugaJiregeePoint point = this.board.getPoint(pointIndex);
+			if (point != null) {
+				return point.getPiece();
+			}
+		} else if (pointIndex == 36) {	// TODO : not to use the magic number.
+			if (!this.stockedDogPieces.isEmpty()) {
+				this.stockedDogPieces.get(0);
+			}
+		}
+		return null;
+	}
+
 	public List<BugaJiregeePoint> getAccessiblePoints(BugaJiregeePiece piece) {
-		return piece.getAccessiblePoints();
+		if (piece != null) {
+			if (this.stockedDogPieces.contains(piece)) {
+				return this.board.getEmptyPoints();
+			} else {
+				return piece.getAccessiblePoints();
+			}
+		}
+		return new ArrayList<BugaJiregeePoint>();	// return empty list
 	}
 
 	public BugaJiregeePiece movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
 		if (this.players.get(this.currentPlayerIndex).getPieces().contains(piece)) {
-			BugaJiregeePiece removedPiece = piece.moveTo(toPoint);
-			this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
-			return removedPiece;
+			if (this.stockedDogPieces.contains(piece)) {
+				if (this.board.getEmptyPoints().contains(toPoint)) {
+					piece.setPoint(toPoint);
+					this.stockedDogPieces.remove(piece);
+					return null;
+				}
+			} else {
+				BugaJiregeePiece removedPiece = piece.moveTo(toPoint);
+				removedPiece.setPoint(this.board.getPoint(0));	// FIXME : change the managing method.
+				this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
+				return removedPiece;
+			}
 		}
 		// TODO implement to throw an error exception.
 		return null;
@@ -99,14 +135,21 @@ public class BugaJiregeeGame implements Serializable {
 	//
 
 	private void resetPiecesPosition() {
+		this.stockedDogPieces = new ArrayList<BugaJiregeePiece>();
 		for (Player player : this.players) {
 			for (int i = 0; i < player.getPieces().size(); i++) {
-				switch (player.getPieces().get(i).getType()) {
+				BugaJiregeePiece piece = player.getPieces().get(i);
+				switch (piece.getType()) {
 				case BugaJiregeePiece.TYPE_DEER:
-					player.getPieces().get(i).setPoint(this.board.getPoint(INIT_DEER_POINTS[i]));
+					piece.setPoint(this.board.getPoint(INIT_DEER_POINTS[i]));
 					break;
 				case BugaJiregeePiece.TYPE_DOG:
-					player.getPieces().get(i).setPoint(this.board.getPoint(INIT_DOG_POINTS[i]));
+					if (i < INIT_DOG_POINTS.length) {
+						piece.setPoint(this.board.getPoint(INIT_DOG_POINTS[i]));
+					} else {
+						piece.setPoint(null);
+						this.stockedDogPieces.add(piece);
+					}
 					break;
 				}
 			}

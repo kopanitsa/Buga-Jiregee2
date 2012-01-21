@@ -22,67 +22,71 @@ public class Player implements Serializable {
 	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
 	private String key;
 
-  @Persistent
-  private String name;
+	@Persistent
+	private String name;
 
-  @Persistent
-  private List<BugaJiregeePiece> pieces;
+	@Persistent
+	private List<BugaJiregeePiece> pieces;
 
-  public Player(int type) {
-      switch (type) {
-      case BugaJiregeePiece.TYPE_DEER:
-          this.pieces = new ArrayList<BugaJiregeePiece>();
-          for (int i = 0; i < BugaJiregeePiece.NUM_OF_DEERS; i++) {
-        	  this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DEER));
-          }
-          break;
-      case BugaJiregeePiece.TYPE_DOG:
-          this.pieces = new ArrayList<BugaJiregeePiece>();
-          for (int i = 0; i < BugaJiregeePiece.NUM_OF_DOGS; i++) {
-        	  this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DOG));
-          }
-          break;
-      }
-  }
+	public Player(int type) {
+		switch (type) {
+		case BugaJiregeePiece.TYPE_DEER:
+			this.pieces = new ArrayList<BugaJiregeePiece>();
+			for (int i = 0; i < BugaJiregeePiece.NUM_OF_DEERS; i++) {
+				this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DEER));
+			}
+			break;
+		case BugaJiregeePiece.TYPE_DOG:
+			this.pieces = new ArrayList<BugaJiregeePiece>();
+			for (int i = 0; i < BugaJiregeePiece.NUM_OF_DOGS; i++) {
+				this.pieces.add(new BugaJiregeePiece(BugaJiregeePiece.TYPE_DOG));
+			}
+			break;
+		}
+	}
 
-  public String getKey() {
-    return key;
-  }
-  
-  public String getName() {
-    return name;
-  }
+	public String getKey() {
+		return key;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public PlayerValue toValue() {
-      return new PlayerValue(key, name);   
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+	public PlayerValue toValue() {
+		return new PlayerValue(key, name);   
+	}
 
-    Player player = (Player) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
-    if (key != null ? !key.equals(player.key) : player.key != null) return false;
-    if (name != null ? !name.equals(player.name) : player.name != null) return false;
+		Player player = (Player) o;
 
-    return true;
-  }
+		if (key != null ? !key.equals(player.key) : player.key != null) return false;
+		if (name != null ? !name.equals(player.name) : player.name != null) return false;
 
-  @Override
-  public int hashCode() {
-    int result = key != null ? key.hashCode() : 0;
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    return result;
-  }
- 
-  public List<BugaJiregeePiece> getPieces() {
-	  return this.pieces;
-  }
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = key != null ? key.hashCode() : 0;
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		return result;
+	}
+
+	public List<BugaJiregeePiece> getPieces() {
+		return this.pieces;
+	}
+
+	public int getType() {
+		return this.pieces.get(0).getType();
+	}
 
 }
