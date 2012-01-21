@@ -10,8 +10,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.jdo.annotations.Extension;
 
+@SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeGame implements Serializable {
 
@@ -56,7 +56,7 @@ public class BugaJiregeeGame implements Serializable {
 		this.id = id;
 		this.state = State.NEW;
 		this.timeCreated = new Date(System.currentTimeMillis());
-		this.players = new ArrayList<Player>(2);
+		this.players = new ArrayList<Player>();
 		this.currentPlayerIndex = 0;
 		this.board = new BugaJiregeeBoard();
 	}

@@ -2,6 +2,15 @@ package com.jirge.server;
 
 import java.io.Serializable;
 
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+
+@PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class BugaJiregeeBoard implements Serializable {
 
 	/**
@@ -11,6 +20,12 @@ public class BugaJiregeeBoard implements Serializable {
 	 */
 	private static final int NUM_OF_POINTS = (6 + 5 * 5 + 4) + 2;
 
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String key;
+
+	@Persistent
 	private BugaJiregeePoint points[];
 
 	public BugaJiregeeBoard() {

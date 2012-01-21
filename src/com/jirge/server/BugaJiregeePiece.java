@@ -6,6 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+@PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class BugaJiregeePiece implements Serializable {
 
 	public static final int TYPE_DEER = 1;
@@ -14,7 +22,15 @@ public class BugaJiregeePiece implements Serializable {
 	public static final int NUM_OF_DEERS =  2;
 	public static final int NUM_OF_DOGS  = 25;
 
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String key;
+
+	@Persistent
 	private int type;
+
+	@Persistent
 	private BugaJiregeePoint point;
 
 	public BugaJiregeePiece(int type) {

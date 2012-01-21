@@ -6,6 +6,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+@PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class BugaJiregeePoint implements Serializable {
 
 	/**
@@ -21,8 +30,19 @@ public class BugaJiregeePoint implements Serializable {
 	protected static final int D_DOWN_RIGHT = 7;
 	private static final int NUM_OF_DIRECTIONS = 8;
 
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String key;
+
+	@Persistent
 	private int index;
+
+	@Persistent
 	private Map<Integer, BugaJiregeePoint> paths;
+
+	@Persistent
 	private BugaJiregeePiece piece;
 
 	public BugaJiregeePoint(int index) {

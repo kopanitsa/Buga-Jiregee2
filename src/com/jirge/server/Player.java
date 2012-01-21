@@ -14,14 +14,13 @@ import javax.jdo.annotations.PrimaryKey;
 import com.jirge.shared.PlayerValue;
 
 
-@SuppressWarnings("serial")
 @PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class Player implements Serializable {
 
-  @PrimaryKey
-  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-  @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-  private String key;
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String key;
 
   @Persistent
   private String name;
