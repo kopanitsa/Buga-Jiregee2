@@ -42,4 +42,11 @@ public interface GameService extends RemoteService {
    * player up to the current game state.
    */
   List<Message> confirmLogin();
+  
+  /**
+   * Get the list of accessible point of selected piece.
+   * 
+   * @return a list of indexes of board that the selected piece can move to.
+   */
+  int[] getAccessiblePoints(int index);
 }

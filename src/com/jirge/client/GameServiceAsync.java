@@ -8,6 +8,9 @@ import com.jirge.shared.message.Message;
 
 public interface GameServiceAsync {
 
-  void login(String name, Long gameId, AsyncCallback<LoginResults> async);
-  void confirmLogin(AsyncCallback<List<Message>> async);
+	void login(String name, Long gameId, AsyncCallback<LoginResults> async);
+
+	void confirmLogin(AsyncCallback<List<Message>> async);
+
+	void getAccessiblePoints(int index, AsyncCallback<int[]> callback);
 }

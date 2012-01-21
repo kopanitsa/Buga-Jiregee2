@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jirge.shared.LoginResults;
 import com.jirge.shared.UpdateBoardInfo;
 import com.jirge.shared.message.Message;
+import com.jirge.shared.message.TurnChangedMessage;
 import com.jirge.shared.message.UpdateBoardMessage;
 
 public class JirgeBoard extends VerticalPanel {
@@ -54,6 +55,10 @@ public class JirgeBoard extends VerticalPanel {
 			updateBoard((UpdateBoardMessage) msg);
 			break;
 
+		case TURN_CHANGED:
+			turnChanged((TurnChangedMessage) msg);
+			break;
+			
 		case NEW_PLAYER:
 			break;
 
@@ -75,5 +80,10 @@ public class JirgeBoard extends VerticalPanel {
 			Window.alert("player type : " + info.playerType + ", before : "
 					+ info.beforePos + ", after : " + info.afterPos);
 		}
+	}
+
+	private void turnChanged(TurnChangedMessage msg) {
+		int[] movablePieces = msg.getMovablePieces();
+		Window.alert(movablePieces.toString());
 	}
 }

@@ -94,6 +94,12 @@ public class GameServiceImpl extends RemoteServiceServlet
       messages.add(new TmpMessage());
       return messages;
     }
+  
+  public int[] getAccessiblePoints(int index) {
+	  BugaJiregeeGame game = getGameForSession();
+	  int[] accessiblePoints = {1, 2};
+	  return accessiblePoints; 
+  }
 
   private boolean tryCreateGame(long gameId) {
     PersistenceManager pm = JdoUtil.getPm();

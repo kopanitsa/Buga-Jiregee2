@@ -9,6 +9,7 @@ public abstract class Message implements Serializable {
 		NEW_PLAYER,
 		GAME_BEGIN,
 		UPDATE_BOARD,
+		TURN_CHANGED,
 		STEP_OCCURRED,
 		GAME_END,
 	}
