@@ -1,54 +1,81 @@
 package com.jirge.server;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeBoard implements Serializable {
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-	private String key;
+	/**
+	 * 0    : Out of board,
+	 * 1-35 : On the board,
+	 * 36   : Stocks (for Dog pieces)
+	 */
+	private static final int NUM_OF_POINTS = (6 + 5 * 5 + 4) + 2;
 
-	@Persistent private List<BugaJiregeePoint> points;
+	private BugaJiregeePoint points[];
 
 	public BugaJiregeeBoard() {
-		this.points = new ArrayList<BugaJiregeePoint>(5 * 9);
-		//this.points[0][0] = new BugaJiregeePoint(0, 0, 0, 0, 0, 2, 0, 0, 1);
-		//this.points[0][1] = null;
-		//this.points[0][2] = new BugaJiregeePoint(0, 0, 0, 2, 0, 2, 0, 1, 0);
+		initPoints();
+		initPaths();
 	}
 
-	public BugaJiregeePoint getPoint(int x, int y) {
-		if (x >= 0 && x < 5 && y >= 0 && y < 9) {
-			return this.points.get(x + y * 5);
+	public BugaJiregeePoint getPoint(int index) {
+		if (index >= 0 && index < NUM_OF_POINTS) {
+			return this.points[index];
 		} else {
 			return null;
 		}
 	}
 
-	public BugaJiregeePiece getPiece(int x, int y) {
-		BugaJiregeePoint point = getPoint(x, y);
-		if (point != null) {
-			return point.getPiece();
-		} else {
-			return null;
+	//
+
+	private void initPoints() {
+		this.points = new BugaJiregeePoint[NUM_OF_POINTS];
+		for (int i = 0; i < NUM_OF_POINTS; i++) {
+			this.points[i] = new BugaJiregeePoint(i);
 		}
 	}
 
-	public List<BugaJiregeePiece> getMovablePieces() {
-		List<BugaJiregeePiece> movablePieces = new ArrayList<BugaJiregeePiece>();
-		// TODO implement
-		return movablePieces;
-	}
+	private void initPaths() {
+		BugaJiregeePoint p[] = this.points;
 
+		/* p[1]-p[6] */
+		/*              UP,    DOWN,  LEFT, RIGHT,   U_L,   U_R,   D_L,   D_R */
+		p[ 1].setPaths( null,  null,  null, p[ 2],  null,  null,  null, p[ 4]);
+		p[ 2].setPaths( null, p[ 5], p[ 1], p[ 3],  null,  null,  null,  null);
+		p[ 3].setPaths( null,  null, p[ 2],  null,  null,  null, p[ 6],  null);
+		p[ 4].setPaths( null,  null,  null, p[ 5], p[ 1],  null,  null, p[ 9]);
+		p[ 5].setPaths(p[ 2], p[ 9], p[ 4], p[ 6],  null,  null,  null,  null);
+		p[ 6].setPaths( null,  null, p[ 5],  null,  null, p[ 3], p[ 9],  null);
+
+		/* p[7]-p[31] */
+		for (int i = 7; i < 32; i++) {
+			if (i > 11) p[i].setPath(BugaJiregeePoint.D_UP, p[i - 5]);
+			if (i < 27) p[i].setPath(BugaJiregeePoint.D_DOWN, p[i + 5]);
+			if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_LEFT, p[i - 1]);
+			if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_RIGHT, p[i + 1]);
+			if (i % 2 == 1) {
+				if (i > 11) {
+					if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_UP_LEFT, p[i - 6]);
+					if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_UP_RIGHT, p[i - 4]);
+				}
+				if (i < 27) {
+					if (i % 5 != 2) p[i].setPath(BugaJiregeePoint.D_DOWN_LEFT, p[i + 4]);
+					if (i % 5 != 1) p[i].setPath(BugaJiregeePoint.D_DOWN_RIGHT, p[i + 6]);
+				}
+			}
+		}
+		p[ 9].setPath(BugaJiregeePoint.D_UP_LEFT,    p[ 4]);
+		p[ 9].setPath(BugaJiregeePoint.D_UP,         p[ 5]);
+		p[ 9].setPath(BugaJiregeePoint.D_UP_RIGHT,   p[ 6]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN_LEFT,  p[32]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN,       p[33]);
+		p[29].setPath(BugaJiregeePoint.D_DOWN_RIGHT, p[34]);
+
+		/* p[32]-p[35] */
+		/*              UP,    DOWN,  LEFT, RIGHT,   U_L,   U_R,   D_L,   D_R */
+		p[32].setPaths( null,  null,  null, p[33],  null, p[29],  null, p[35]);
+		p[33].setPaths(p[29], p[35], p[32], p[34],  null,  null,  null,  null);
+		p[34].setPaths( null,  null, p[33],  null, p[29],  null, p[35],  null);
+		p[35].setPaths(p[33],  null,  null,  null, p[32], p[34],  null,  null);
+	}
 }

@@ -24,7 +24,13 @@ public class BugaJiregeeGame implements Serializable {
         IN_PROGRESS,
         COMPLETE
     }
-    
+
+	private static final int[] INIT_DEER_POINTS = {9, 29};
+
+	private static final int[] INIT_DOG_POINTS = {13, 14, 15, 18, 20, 23, 24, 25,		// 8 pieces on board
+												  36, 36, 36, 36, 36, 36, 36, 36,
+												  36, 36, 36, 36, 36, 36, 36, 36, 36};	// 17 pieces stocked
+
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Long id;
@@ -34,6 +40,9 @@ public class BugaJiregeeGame implements Serializable {
 
 	@Persistent
 	private List<Player> players;
+
+	@Persistent
+	private int currentPlayerIndex;
 
 	//@Persistent private List<Move> moves;
 	
@@ -45,10 +54,64 @@ public class BugaJiregeeGame implements Serializable {
 
 	public BugaJiregeeGame(Long id) {
 		this.id = id;
-	    this.state = State.NEW;
-	    this.timeCreated = new Date(System.currentTimeMillis());
+		this.state = State.NEW;
+		this.timeCreated = new Date(System.currentTimeMillis());
 		this.players = new ArrayList<Player>(2);
+		this.currentPlayerIndex = 0;
 		this.board = new BugaJiregeeBoard();
+	}
+
+
+	//
+	// APIs
+	//
+
+	public void start() {
+		resetPiecesPosition();
+		this.currentPlayerIndex = 0;
+	}
+
+	public List<BugaJiregeePiece> getMovablePieces() {
+		List<BugaJiregeePiece> movablePieces = new ArrayList<BugaJiregeePiece>();
+		List<BugaJiregeePiece> pieces = this.players.get(this.currentPlayerIndex).getPieces();
+		for (BugaJiregeePiece piece : pieces) {
+			List<BugaJiregeePoint> accessiblePoints = getAccessiblePoints(piece);
+			if (!accessiblePoints.isEmpty()) {
+				movablePieces.add(piece);
+			}
+		}
+		return movablePieces;
+	}
+
+	public List<BugaJiregeePoint> getAccessiblePoints(BugaJiregeePiece piece) {
+		return piece.getAccessiblePoints();
+	}
+
+	public BugaJiregeePiece movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
+		if (this.players.get(this.currentPlayerIndex).getPieces().contains(piece)) {
+			BugaJiregeePiece removedPiece = piece.moveTo(toPoint);
+			this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
+			return removedPiece;
+		}
+		// TODO implement to throw an error exception.
+		return null;
+	}
+
+	//
+
+	private void resetPiecesPosition() {
+		for (Player player : this.players) {
+			for (int i = 0; i < player.getPieces().size(); i++) {
+				switch (player.getPieces().get(i).getType()) {
+				case BugaJiregeePiece.TYPE_DEER:
+					player.getPieces().get(i).setPoint(this.board.getPoint(INIT_DEER_POINTS[i]));
+					break;
+				case BugaJiregeePiece.TYPE_DOG:
+					player.getPieces().get(i).setPoint(this.board.getPoint(INIT_DOG_POINTS[i]));
+					break;
+				}
+			}
+		}
 	}
 
 	// Setters & Getters
@@ -84,5 +147,8 @@ public class BugaJiregeeGame implements Serializable {
 	public Date getTimeCreated() {
 	    return timeCreated;
 	}
-	
+
+	public int getCurrentPlayerIndex() {
+		return currentPlayerIndex;
+	}
 }

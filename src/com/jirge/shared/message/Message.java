@@ -5,29 +5,26 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public abstract class Message implements Serializable {
 
-  public enum Type {
-    NEW_PLAYER,
-    GAME_BEGIN,
-    MATCH_BEGIN,
-    ROUND_BEGIN,
-    DANCE_BEGIN,
-    STEP_OCCURRED,
-    GAME_END,
-  }
+	public enum Type {
+		NEW_PLAYER,
+		GAME_BEGIN,
+		UPDATE_BOARD,
+		STEP_OCCURRED,
+		GAME_END,
+	}
 
-  private Type type;
+	private Type type;
 
-  // For GWT RPC
-  @SuppressWarnings("unused")
-private Message() {
-  }
+	// For GWT RPC
+	@SuppressWarnings("unused")
+	private Message() {
+	}
 
-  protected Message(Type type) {
-    this.type = type;
-  }
+	protected Message(Type type) {
+		this.type = type;
+	}
 
-  public Type getType() {
-    return type;
-  }
+	public Type getType() {
+		return type;
+	}
 }
-
