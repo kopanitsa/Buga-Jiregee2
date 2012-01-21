@@ -13,4 +13,6 @@ public interface GameServiceAsync {
 	void confirmLogin(AsyncCallback<List<Message>> async);
 
 	void getAccessiblePoints(int index, AsyncCallback<int[]> callback);
+
+	void movePiece(int fromIndex, int toIndex, AsyncCallback<Boolean> callback);
 }

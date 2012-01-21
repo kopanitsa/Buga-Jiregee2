@@ -1,9 +1,12 @@
 package com.jirge.server.tasks;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
+import com.jirge.server.BugaJiregeeGame;
+import com.jirge.server.BugaJiregeePiece;
 import com.jirge.server.Player;
 import com.jirge.server.PushServer;
 import com.jirge.shared.message.TurnChangedMessage;
@@ -11,15 +14,21 @@ import com.newatlanta.appengine.taskqueue.Deferred;
 
 @SuppressWarnings("serial")
 public class TurnChanged implements Deferred.Deferrable {
-	private final int[] movablePieces;
-	private final Player player;
+	private final BugaJiregeeGame game;
 
-	public TurnChanged(int[] movablePieces, Player player) {
-		this.movablePieces = movablePieces;
-		this.player = player;
+	public TurnChanged(BugaJiregeeGame game) {
+		this.game = game;
 	}
 
 	public void doTask() throws ServletException, IOException {
-		PushServer.sendMessage(player, new TurnChangedMessage(movablePieces));
+		List<BugaJiregeePiece> movablePieces = game.getMovablePieces();
+		int[] movableIndexes = new int[movablePieces.size()];
+		for (int i = 0; i < movableIndexes.length; i++) {
+			movableIndexes[i] = movablePieces.get(i).getPoint().getIndex();
+		}
+		int playerIndex = game.getCurrentPlayerIndex();
+		Player player = game.getPlayers().get(playerIndex);
+		
+		PushServer.sendMessage(player, new TurnChangedMessage(movableIndexes));
 	}
 }
