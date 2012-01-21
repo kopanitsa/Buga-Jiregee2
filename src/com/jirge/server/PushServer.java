@@ -81,7 +81,7 @@ public class PushServer {
    * @return the client channel id
    */
   public static String createChannel(Player player) {
-    String channelId = getChannelService().createChannel(APP_KEY_PREFIX + player.getName());
+    String channelId = getChannelService().createChannel(player.getKey());
     logger.warning("Returning new channel " + channelId + " for player " + player.getName());
     return channelId;
   }

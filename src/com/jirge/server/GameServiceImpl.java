@@ -211,7 +211,7 @@ public class GameServiceImpl extends RemoteServiceServlet
       cache.put(CURRENT_GAME_ID, gameId);
       cache.put(gameId + "-" + CURRENT_GAME_NUM_PLAYERS, 1);
       StartGame startGame = new StartGame(gameId);
-      TaskOptions to = getTaskOptions().countdownMillis(waitTime * 1000);
+      TaskOptions to = getTaskOptions().countdownMillis(MAX_WAIT_TIME_MILLIS);
       defer(startGame, to);
       return gameId;
     }
