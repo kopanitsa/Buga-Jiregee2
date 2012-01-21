@@ -13,6 +13,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 @PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class BugaJiregeePiece implements Serializable {
 
@@ -24,8 +26,7 @@ public class BugaJiregeePiece implements Serializable {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-	private String key;
+	private Key key;
 
 	@Persistent
 	private int type;

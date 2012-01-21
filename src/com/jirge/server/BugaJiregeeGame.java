@@ -11,7 +11,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-@SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeGame implements Serializable {
 
