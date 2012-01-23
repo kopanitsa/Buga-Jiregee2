@@ -38,7 +38,7 @@ public class BugaJiregeeGame implements Serializable {
 	private List<Player> players;
 
 	@Persistent
-	private int currentPlayerIndex;
+	private Integer currentPlayerIndex;
 
 	//@Persistent private List<Move> moves;
 	

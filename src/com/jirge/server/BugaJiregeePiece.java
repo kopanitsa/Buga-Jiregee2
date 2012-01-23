@@ -14,12 +14,13 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.jirge.shared.PieceType;
 
 @PersistenceCapable(identityType= IdentityType.APPLICATION)
 public class BugaJiregeePiece implements Serializable {
 
-	public static final int TYPE_DEER = 1;
-	public static final int TYPE_DOG = 2;
+	public static final int TYPE_DEER = PieceType.DEER;
+	public static final int TYPE_DOG = PieceType.DOG;
 
 	public static final int NUM_OF_DEERS =  2;
 	public static final int NUM_OF_DOGS  = 25;

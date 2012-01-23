@@ -26,6 +26,7 @@ import com.jirge.server.tasks.StartGame;
 import com.jirge.server.tasks.TurnChanged;
 import com.jirge.server.tasks.UpdateBoard;
 import com.jirge.shared.LoginResults;
+import com.jirge.shared.PieceType;
 import com.jirge.shared.UpdateBoardInfo;
 import com.jirge.shared.message.Message;
 import com.jirge.shared.message.TmpMessage;
@@ -53,8 +54,15 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		session.setAttribute(GAME_ID, gameId);
 
 		BugaJiregeeGame game = getGameById(gameId);
-		// FIXME need to select deer or dog
-		Player player = new Player(BugaJiregeePiece.TYPE_DEER);
+
+		Player player;
+		if (game.getPlayers().size() == 0) {
+			// 1st player is deer.
+			player = new Player(BugaJiregeePiece.TYPE_DEER);
+		} else {
+			// 2nd player is dog.
+			player = new Player(BugaJiregeePiece.TYPE_DOG);
+		}
 		player.setName(name);
 		session.setAttribute(PLAYER, player);
 
@@ -81,18 +89,20 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		if (game.getPlayers().size() >= MAX_PLAYERS) {
 			defer(new StartGame(gameId), getTaskOptions().countdownMillis(3000));
 
+			//game.start();
+
 			// TODO implementation
 			List<UpdateBoardInfo> updateBoardInfo = new ArrayList<UpdateBoardInfo>();
-			updateBoardInfo.add(new UpdateBoardInfo(0, 0, 9));
-			updateBoardInfo.add(new UpdateBoardInfo(0, 0, 29));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 13));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 14));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 15));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 18));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 20));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 23));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 24));
-			updateBoardInfo.add(new UpdateBoardInfo(1, 0, 25));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 9));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 29));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 13));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 14));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 15));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 18));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 20));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 23));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 24));
+			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 25));
 			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
 					.countdownMillis(4000));
 
@@ -131,8 +141,8 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 
 		// Need to get the actual update information from data model.
 		List<UpdateBoardInfo> updateBoardInfo = new ArrayList<UpdateBoardInfo>();
-		updateBoardInfo.add(new UpdateBoardInfo(0, 0, 9));
-		updateBoardInfo.add(new UpdateBoardInfo(0, 0, 29));
+		updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 9));
+		updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 29));
 		defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
 				.countdownMillis(1000));
 

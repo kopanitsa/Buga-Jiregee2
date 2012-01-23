@@ -9,9 +9,12 @@ import com.google.gwt.appengine.channel.client.SocketListener;
 import com.google.gwt.appengine.channel.client.ChannelFactory.ChannelCreatedCallback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamFactory;
+import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.jirge.shared.LoginResults;
+import com.jirge.shared.message.Message;
 
 public class Main implements EntryPoint {
 
@@ -50,8 +53,15 @@ public class Main implements EntryPoint {
               Window.alert("Channel opened!");
             }
             @Override
-            public void onMessage(String message) {
-              Window.alert("Received: " + message);
+            public void onMessage(String encodedData) {
+              Window.alert("Received: " + encodedData);
+              try {
+                SerializationStreamReader reader = mPushServiceStreamFactory.createStreamReader(encodedData);
+                Message message = (Message) reader.readObject();
+                board.receiveMsg(message);
+              } catch (SerializationException e) {
+                throw new RuntimeException("Unable to deserialize " + encodedData, e);
+              }
             }
             @Override
             public void onError(SocketError error) {
