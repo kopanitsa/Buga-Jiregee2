@@ -1,8 +1,10 @@
 package com.jirge.client;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -13,6 +15,8 @@ import com.jirge.shared.message.TurnChangedMessage;
 import com.jirge.shared.message.UpdateBoardMessage;
 
 public class JirgeBoard extends VerticalPanel {
+
+	private final Logger mLogger = Logger.getLogger(this.getClass().getName());
 
 	public JirgeBoard(String playerName, LoginResults results) {
 		// TODO Auto-generated constructor stub
@@ -58,7 +62,7 @@ public class JirgeBoard extends VerticalPanel {
 		case TURN_CHANGED:
 			turnChanged((TurnChangedMessage) msg);
 			break;
-			
+
 		case NEW_PLAYER:
 			break;
 
@@ -84,6 +88,18 @@ public class JirgeBoard extends VerticalPanel {
 
 	private void turnChanged(TurnChangedMessage msg) {
 		int[] movablePieces = msg.getMovablePieces();
-		Window.alert(movablePieces.toString());
+		GameServiceAsync gameService = GameService.App.getInstance();
+
+		gameService.getAccessiblePoints(movablePieces[0], new AsyncCallback<int[]>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("Failure: " + caught.getMessage());
+			}
+
+			public void onSuccess(int[] result) {
+				for(int i=0; i<result.length; i++) {
+					mLogger.info("result[i] = ," + result[i]);
+				}
+			}
+		});
 	}
 }

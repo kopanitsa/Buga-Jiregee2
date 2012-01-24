@@ -87,22 +87,13 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		defer(new SendNewPlayer(player, game), getTaskOptions());
 
 		if (game.getPlayers().size() >= MAX_PLAYERS) {
+			// Start game
 			defer(new StartGame(gameId), getTaskOptions().countdownMillis(3000));
 
+			// Initialize game
 			game.start();
-
-			// TODO implementation
-			List<UpdateBoardInfo> updateBoardInfo = new ArrayList<UpdateBoardInfo>();
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 9));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 29));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 13));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 14));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 15));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 18));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 20));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 23));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 24));
-			updateBoardInfo.add(new UpdateBoardInfo(PieceType.DOG, 0, 25));
+			List<UpdateBoardInfo> updateBoardInfo = game
+					.getLastUpdateBoardInfo();
 			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
 					.countdownMillis(4000));
 
@@ -135,20 +126,22 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public boolean movePiece(int fromIndex, int toIndex) {
-		// TODO implementation
 		BugaJiregeeGame game = getGameForSession();
-		game.movePiece(game.getPieceByPointIndex(fromIndex), game.getBoard().getPoint(toIndex));
+		BugaJiregeePiece piece = game.getPieceByPointIndex(fromIndex);
+		BugaJiregeePoint toPoint = game.getBoard().getPoint(toIndex);
 
-		// Need to get the actual update information from data model.
-		List<UpdateBoardInfo> updateBoardInfo = new ArrayList<UpdateBoardInfo>();
-		updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 9));
-		updateBoardInfo.add(new UpdateBoardInfo(PieceType.DEER, 0, 29));
-		defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
-				.countdownMillis(1000));
+		boolean moveSuccess = game.movePiece(piece, toPoint);
 
-		defer(new TurnChanged(game), getTaskOptions().countdownMillis(2000));
+		if (moveSuccess) {
+			List<UpdateBoardInfo> updateBoardInfo = game
+					.getLastUpdateBoardInfo();
+			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
+					.countdownMillis(1000));
 
-		return true;
+			defer(new TurnChanged(game), getTaskOptions().countdownMillis(2000));
+		}
+
+		return moveSuccess;
 	}
 
 	private boolean tryCreateGame(long gameId) {

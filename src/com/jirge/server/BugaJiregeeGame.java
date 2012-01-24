@@ -7,9 +7,12 @@ import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import com.jirge.shared.UpdateBoardInfo;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeGame implements Serializable {
@@ -51,6 +54,9 @@ public class BugaJiregeeGame implements Serializable {
 	@Persistent
 	private Date timeCreated;
 
+	@NotPersistent
+	private List<UpdateBoardInfo> lastUpdatedBoardInfo;
+
 	public BugaJiregeeGame(Long id) {
 		this.id = id;
 		this.state = State.NEW;
@@ -58,6 +64,7 @@ public class BugaJiregeeGame implements Serializable {
 		this.players = new ArrayList<Player>();
 		this.currentPlayerIndex = 0;
 		this.board = new BugaJiregeeBoard();
+		lastUpdatedBoardInfo = null;
 	}
 
 
@@ -113,39 +120,58 @@ public class BugaJiregeeGame implements Serializable {
 		return new ArrayList<BugaJiregeePoint>();	// return empty list
 	}
 
-	public BugaJiregeePiece movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
+	public boolean movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
+		BugaJiregeePoint fromPoint = piece.getPoint();
+
 		if (this.players.get(this.currentPlayerIndex).getPieces().contains(piece)) {
 			if (this.stockedDogPieces.contains(piece)) {
 				if (this.board.getEmptyPoints().contains(toPoint)) {
 					piece.setPoint(toPoint);
 					this.stockedDogPieces.remove(piece);
-					return null;
+					currentPlayerIndex = (currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
+					lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
+					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPoint.getIndex(), toPoint.getIndex()));
+					return true;
 				}
 			} else {
 				BugaJiregeePiece removedPiece = piece.moveTo(toPoint);
-				removedPiece.setPoint(this.board.getPoint(0));	// FIXME : change the managing method.
-				this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
-				return removedPiece;
+				lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
+				lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPoint.getIndex(), toPoint.getIndex()));
+
+				if (removedPiece != null) {
+					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), removedPiece.getPoint().getIndex(), 0));
+					removedPiece.setPoint(this.board.getPoint(0));	// FIXME : change the managing method.
+				}
+				currentPlayerIndex = (currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
+				return true;
 			}
 		}
 		// TODO implement to throw an error exception.
-		return null;
+		return false;
+	}
+
+	public List<UpdateBoardInfo> getLastUpdateBoardInfo() {
+		return lastUpdatedBoardInfo;
 	}
 
 	//
 
 	private void resetPiecesPosition() {
-		this.stockedDogPieces = new ArrayList<BugaJiregeePiece>();
+		stockedDogPieces = new ArrayList<BugaJiregeePiece>();
+		lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
+
 		for (Player player : this.players) {
 			for (int i = 0; i < player.getPieces().size(); i++) {
 				BugaJiregeePiece piece = player.getPieces().get(i);
 				switch (piece.getType()) {
 				case BugaJiregeePiece.TYPE_DEER:
 					piece.setPoint(this.board.getPoint(INIT_DEER_POINTS[i]));
+					lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DEER, 0, piece.getPoint().getIndex()));
 					break;
 				case BugaJiregeePiece.TYPE_DOG:
 					if (i < INIT_DOG_POINTS.length) {
 						piece.setPoint(this.board.getPoint(INIT_DOG_POINTS[i]));
+						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, 0, piece.getPoint().getIndex()));
 					} else {
 						piece.setPoint(null);
 						this.stockedDogPieces.add(piece);
