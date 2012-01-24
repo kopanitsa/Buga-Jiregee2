@@ -89,7 +89,7 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		if (game.getPlayers().size() >= MAX_PLAYERS) {
 			defer(new StartGame(gameId), getTaskOptions().countdownMillis(3000));
 
-			//game.start();
+			game.start();
 
 			// TODO implementation
 			List<UpdateBoardInfo> updateBoardInfo = new ArrayList<UpdateBoardInfo>();
