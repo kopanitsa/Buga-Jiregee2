@@ -16,14 +16,14 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.jirge.shared.PieceType;
 
-@PersistenceCapable(identityType= IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeePiece implements Serializable {
 
 	public static final int TYPE_DEER = PieceType.DEER;
 	public static final int TYPE_DOG = PieceType.DOG;
 
-	public static final int NUM_OF_DEERS =  2;
-	public static final int NUM_OF_DOGS  = 25;
+	public static final int NUM_OF_DEERS = 2;
+	public static final int NUM_OF_DOGS = 25;
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -31,6 +31,9 @@ public class BugaJiregeePiece implements Serializable {
 
 	@Persistent
 	private int type;
+
+	@Persistent
+	private boolean isStocked;
 
 	@Persistent
 	private BugaJiregeePoint point;
@@ -49,12 +52,15 @@ public class BugaJiregeePiece implements Serializable {
 			while (itr.hasNext()) {
 				Integer directionInt = itr.next();
 				int direction = directionInt.intValue();
-				BugaJiregeePoint nextPoint = this.point.getPaths().get(directionInt);
+				BugaJiregeePoint nextPoint = this.point.getPaths().get(
+						directionInt);
 				if (nextPoint.getPiece() == null) {
 					accessiblePoints.add(nextPoint);
 				} else if (this.type == TYPE_DEER) {
-					BugaJiregeePoint nextNextPoint = nextPoint.getPath(direction);
-					if (nextNextPoint != null && nextNextPoint.getPiece() == null) {
+					BugaJiregeePoint nextNextPoint = nextPoint
+							.getPath(direction);
+					if (nextNextPoint != null
+							&& nextNextPoint.getPiece() == null) {
 						accessiblePoints.add(nextNextPoint);
 					}
 				}
@@ -70,7 +76,8 @@ public class BugaJiregeePiece implements Serializable {
 			} else if (this.type == TYPE_DEER) {
 				Integer directionInt = this.point.getNextNextDirection(toPoint);
 				if (directionInt != null) {
-					BugaJiregeePiece nextDogPiece = this.point.getPath(directionInt.intValue()).getPiece();
+					BugaJiregeePiece nextDogPiece = this.point.getPath(
+							directionInt.intValue()).getPiece();
 					if (nextDogPiece != null) {
 						// Deer jumps over dog.
 						setPoint(toPoint);
@@ -97,6 +104,14 @@ public class BugaJiregeePiece implements Serializable {
 
 	public int getType() {
 		return this.type;
+	}
+
+	public boolean isStocked() {
+		return isStocked;
+	}
+
+	public void setStocked(boolean isStocked) {
+		this.isStocked = isStocked;
 	}
 
 }
