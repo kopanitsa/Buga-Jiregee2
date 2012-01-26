@@ -4,9 +4,9 @@ import java.util.logging.Logger;
 
 import com.google.gwt.appengine.channel.client.Channel;
 import com.google.gwt.appengine.channel.client.ChannelFactory;
+import com.google.gwt.appengine.channel.client.ChannelFactory.ChannelCreatedCallback;
 import com.google.gwt.appengine.channel.client.SocketError;
 import com.google.gwt.appengine.channel.client.SocketListener;
-import com.google.gwt.appengine.channel.client.ChannelFactory.ChannelCreatedCallback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -22,6 +22,8 @@ public class Main implements EntryPoint {
   RootPanel mRoot;
   SerializationStreamFactory mPushServiceStreamFactory;
   GameServiceAsync mGameService;
+  GameGroundPanel mGroundPanel;
+  
   private static final Logger mLogger = Logger.getLogger(Main.class.getName());
 
   public void onModuleLoad() {
@@ -33,6 +35,11 @@ public class Main implements EntryPoint {
     mRoot.setStyleName("root");
     mFindGamePanel = new FindGamePanel(this);
     mRoot.add(mFindGamePanel);
+    
+    mGroundPanel = new GameGroundPanel();
+    mRoot.add(mGroundPanel, 200, 200);
+    mGroundPanel.setSize(Integer.toString(GameGroundPanel.GAMEGROUND_WIDTH), Integer.toString(GameGroundPanel.GAMEGROUND_HEIGHT));
+    mGroundPanel.setVisible(true);
   }
 
   /**
