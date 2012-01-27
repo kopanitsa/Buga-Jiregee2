@@ -42,22 +42,22 @@ public class BugaJiregeePoint implements Serializable {
 	@Persistent
 	private Map<Integer, BugaJiregeePoint> paths;
 
-	@Persistent
-	private BugaJiregeePiece piece;
+//	@Persistent
+//	private BugaJiregeePiece piece;
 
 	public BugaJiregeePoint(int index) {
 		this.index = index;
-		this.piece = null;
+//		this.piece = null;
 		this.paths = new HashMap<Integer, BugaJiregeePoint>();
 	}
 
-	public BugaJiregeePiece getPiece() {
-		return piece;
-	}
-
-	public void setPiece(BugaJiregeePiece piece) {
-		this.piece = piece;
-	}
+//	public BugaJiregeePiece getPiece() {
+//		return piece;
+//	}
+//
+//	public void setPiece(BugaJiregeePiece piece) {
+//		this.piece = piece;
+//	}
 
 	public void setPaths(BugaJiregeePoint upPoint, BugaJiregeePoint downPoint, BugaJiregeePoint leftPoint,
 			BugaJiregeePoint rightPoint, BugaJiregeePoint upleftPoint, BugaJiregeePoint uprightPoint,
