@@ -94,7 +94,7 @@ public class GameBoard {
     	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*8));    	
     }
 
-    void drawGameBoard(final Context2d context) {    	
+    public void drawGameBoard(final Context2d context) {
     	for (int i=0; i<getFieldBlocksSize(); i++) {
     		getFieldBlock(i).drawBlock(context);
     	}
@@ -108,7 +108,29 @@ public class GameBoard {
     	return fieldBlocksTable.get(i);
     }
 
-    public ArrayList<Point> getGroundPositionsArrayList() {
-    	return this.groundPositionsArrayList;
+    private ArrayList<Point> getGroundPositionsArrayList() {
+    	return groundPositionsArrayList;
     }
+
+    private int getGroundPositionsSize() {
+    	return getGroundPositionsArrayList().size();
+    }
+    
+    private Point getPoint(int index) {
+    	return getGroundPositionsArrayList().get(index);
+    }
+    
+    public int pickPlayPosition(Point rawPoint) {
+		int pos = 0;
+		try {
+			int count = getGroundPositionsSize() - 1;
+			for (int i= 0; i<count; i++) {
+				pos = FieldBlock.poinsDistance(getPoint(i), rawPoint) > (FieldBlock.poinsDistance(getPoint(i+1), rawPoint)) ? (i) : (i+1);
+			}
+		} catch (IndexOutOfBoundsException e) {
+			throw new IndexOutOfBoundsException("ERROR");
+		}
+
+		return pos;    
+	}
 }

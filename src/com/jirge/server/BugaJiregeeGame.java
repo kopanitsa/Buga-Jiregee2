@@ -51,9 +51,6 @@ public class BugaJiregeeGame implements Serializable {
 	private BugaJiregeeBoard board;
 
 	@Persistent
-	private List<BugaJiregeePiece> stockedDogPieces;
-
-	@Persistent
 	private Date timeCreated;
 
 	@NotPersistent
@@ -89,11 +86,6 @@ public class BugaJiregeeGame implements Serializable {
 				movablePieces.add(piece);
 			}
 		}
-		if (currentPlayer.getType() == BugaJiregeePiece.TYPE_DOG) {
-			for (BugaJiregeePiece stockedPiece : this.stockedDogPieces) {
-				movablePieces.add(stockedPiece);
-			}
-		}
 		return movablePieces;
 	}
 
@@ -111,8 +103,12 @@ public class BugaJiregeeGame implements Serializable {
 				}
 			}
 		} else if (pointIndex == 36) {	// TODO : not to use the magic number.
-			if (!this.stockedDogPieces.isEmpty()) {
-				this.stockedDogPieces.get(0);
+			Player currentPlayer = players.get(this.currentPlayerIndex);
+			List<BugaJiregeePiece> pieces = currentPlayer.getPieces();
+			for (BugaJiregeePiece piece : pieces) {
+				if (piece.isStocked()) {
+					return piece;
+				}
 			}
 		}
 		return null;
@@ -120,7 +116,7 @@ public class BugaJiregeeGame implements Serializable {
 
 	public List<BugaJiregeePoint> getAccessiblePoints(BugaJiregeePiece piece) {
 		if (piece != null) {
-			if (this.stockedDogPieces.contains(piece)) {
+			if (piece.isStocked()) {
 //				return this.board.getEmptyPoints();
 				return getEmptyPoints();
 			} else {
@@ -158,12 +154,12 @@ public class BugaJiregeeGame implements Serializable {
 		BugaJiregeePoint fromPoint = this.board.getPoint(piece.getPointIndex().intValue());
 
 		if (this.players.get(this.currentPlayerIndex).getPieces().contains(piece)) {
-			if (this.stockedDogPieces.contains(piece)) {
+			if (piece.isStocked()) {
 //				if (this.board.getEmptyPoints().contains(toPoint)) {
 				if (getEmptyPoints().contains(toPoint)) {
 //					piece.setPoint(toPoint);
 					piece.setPointIndex(new Integer(toPoint.getIndex()));
-					this.stockedDogPieces.remove(piece);
+					piece.setStocked(false);
 					currentPlayerIndex = (currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
 					lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
 					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPoint.getIndex(), toPoint.getIndex()));
@@ -219,7 +215,6 @@ public class BugaJiregeeGame implements Serializable {
 	//
 
 	private void resetPiecesPosition() {
-		stockedDogPieces = new ArrayList<BugaJiregeePiece>();
 		lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
 
 		for (Player player : this.players) {
@@ -238,9 +233,10 @@ public class BugaJiregeeGame implements Serializable {
 //						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, 0, piece.getPoint().getIndex()));
 						piece.setPointIndex(new Integer(INIT_DOG_POINTS[i]));
 						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, 0, piece.getPointIndex()));
+						piece.setStocked(false);
 					} else {
 						piece.setPointIndex(null);
-						this.stockedDogPieces.add(piece);
+						piece.setStocked(true);
 					}
 					break;
 				}

@@ -1,8 +1,10 @@
 package com.jirge.client;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.GWT;
 
 public class RectangleBlockDash extends FieldBlock {
+
 	RectangleBlockDash(Point... points) {
 		super(points);
 	}
@@ -10,7 +12,12 @@ public class RectangleBlockDash extends FieldBlock {
 	@Override
 	public void drawBlock(Context2d context) {
 		if (context == null) {
+			GWT.log(this.getClass().getName() + " : " + "invalid context.");
 			return;
+		}
+
+		if (getSize() < 1) {
+			GWT.log(this.getClass().getName() + " : " + "the points array is empty.");
 		}
 
 		context.beginPath();

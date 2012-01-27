@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.jirge.shared.UpdateBoardInfo;
 
 public class FieldBlock {
-    ArrayList<Point> pointsArrayList = new ArrayList<Point>(0);
+    private ArrayList<Point> pointsArrayList = new ArrayList<Point>(0);
 
 	public FieldBlock(Point... points) {
 		if (points == null) {
@@ -19,7 +19,7 @@ public class FieldBlock {
 			pointsArrayList.add(point);			
 		}
 	}
-	
+
 	public void drawBlock(Context2d context) {
 		if (context == null) {
 			return;
@@ -29,7 +29,7 @@ public class FieldBlock {
 	public void playerIn(UpdateBoardInfo player) {
 		
 	}
-	
+
 	public void playerOut(UpdateBoardInfo player) {
 
 	}
@@ -49,7 +49,7 @@ public class FieldBlock {
 		return pointsArrayList.size();
 	}
 	
-	public double poinsDistance(Point pX, Point pY) {
+	public static double poinsDistance(Point pX, Point pY) {
 		return Math.sqrt((pY.getX() - pX.getX()) * (pY.getX() - pX.getX())) + ((pY.getY() - pX.getY()) * (pY.getY() - pX.getY()));
 	}
 
