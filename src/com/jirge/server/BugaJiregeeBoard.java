@@ -37,6 +37,12 @@ public class BugaJiregeeBoard implements Serializable {
 		initPaths();
 	}
 
+	//
+
+	public BugaJiregeePoint[] getPoints() {
+		return this.points;
+	}
+
 	public BugaJiregeePoint getPoint(int index) {
 		if (index >= 0 && index < NUM_OF_POINTS) {
 			return this.points[index];
@@ -45,15 +51,15 @@ public class BugaJiregeeBoard implements Serializable {
 		}
 	}
 
-	public List<BugaJiregeePoint> getEmptyPoints() {
-		List<BugaJiregeePoint> emptyPoints = new ArrayList<BugaJiregeePoint>();
-		for (int i = 0; i < this.points.length; i++) {
-			if (this.points[i].getPiece() == null) {
-				emptyPoints.add(this.points[i]);
-			}
-		}
-		return emptyPoints;
-	}
+//	public List<BugaJiregeePoint> getEmptyPoints() {
+//		List<BugaJiregeePoint> emptyPoints = new ArrayList<BugaJiregeePoint>();
+//		for (int i = 0; i < this.points.length; i++) {
+//			if (this.points[i].getPiece() == null) {
+//				emptyPoints.add(this.points[i]);
+//			}
+//		}
+//		return emptyPoints;
+//	}
 
 	//
 

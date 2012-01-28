@@ -24,7 +24,8 @@ public class TurnChanged implements Deferred.Deferrable {
 		List<BugaJiregeePiece> movablePieces = game.getMovablePieces();
 		int[] movableIndexes = new int[movablePieces.size()];
 		for (int i = 0; i < movableIndexes.length; i++) {
-			movableIndexes[i] = movablePieces.get(i).getPoint().getIndex();
+//			movableIndexes[i] = movablePieces.get(i).getPoint().getIndex();
+			movableIndexes[i] = movablePieces.get(i).getPointIndex();
 		}
 		int playerIndex = game.getCurrentPlayerIndex();
 		Player player = game.getPlayers().get(playerIndex);
