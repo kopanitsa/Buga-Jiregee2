@@ -97,8 +97,10 @@ public class BugaJiregeeGame implements Serializable {
 //			}
 			for (Player player : this.players) {
 				for (BugaJiregeePiece piece : player.getPieces()) {
-					if (piece.getPointIndex() == new Integer(pointIndex)) {
-						return piece;
+					if (piece.getPointIndex() != null) {
+						if (piece.getPointIndex().intValue() == pointIndex) {
+							return piece;
+						}
 					}
 				}
 			}
