@@ -3,10 +3,11 @@ package com.jirge.client;
 import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.ImageElement;
 
 public class GameBoard {
-	ArrayList<FieldBlock> fieldBlocksTable = new ArrayList<FieldBlock>(0);
-	ArrayList<Point> groundPositionsArrayList = new ArrayList<Point>(0);
+	ArrayList<FieldBlock> fieldBlocksContainer = new ArrayList<FieldBlock>(0);
+	ArrayList<Position> groundPositionsArrayList = new ArrayList<Position>(0);
 
 	private int blkw, blkh;
 	private double ltx, lty; 
@@ -17,81 +18,83 @@ public class GameBoard {
     	this.blkw = blockWidth;
     	this.blkh = blockHeight;
 
-    	fieldBlocksTable.clear();
+    	fieldBlocksContainer.clear();
     	
-    	fieldBlocksTable.add(new TrapezoidBlock(new Point(ltx+blkw, lty), new Point(ltx+blkw*2, lty), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*1.5, lty+blkh)));
-    	fieldBlocksTable.add(new TrapezoidBlock(new Point(ltx+blkw*2, lty), new Point(ltx+blkw*3, lty), new Point(ltx+blkw*2.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh)));
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw*1.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*2, lty+blkh*2)));
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*2.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh*2)));
+    	fieldBlocksContainer.add(new TrapezoidBlock(new Point(ltx+blkw, lty), new Point(ltx+blkw*2, lty), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*1.5, lty+blkh)));
+    	fieldBlocksContainer.add(new TrapezoidBlock(new Point(ltx+blkw*2, lty), new Point(ltx+blkw*3, lty), new Point(ltx+blkw*2.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh)));
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*1.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*2, lty+blkh*2)));
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*2.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh*2)));
 
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx, lty+blkh*2), new Point(ltx+blkw, lty+blkh*2), new Point(ltx+blkw, lty+blkh*3), new Point(ltx, lty+blkh*3)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw, lty+blkh*2), new Point(ltx+blkw*2, lty+blkh*2), new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw, lty+blkh*3)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw*2, lty+blkh*2), new Point(ltx+blkw*3, lty+blkh*2), new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*3)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw*3, lty+blkh*2), new Point(ltx+blkw*4, lty+blkh*2), new Point(ltx+blkw*4, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*3)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx, lty+blkh*2), new Point(ltx+blkw, lty+blkh*2), new Point(ltx+blkw, lty+blkh*3), new Point(ltx, lty+blkh*3)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw, lty+blkh*2), new Point(ltx+blkw*2, lty+blkh*2), new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw, lty+blkh*3)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw*2, lty+blkh*2), new Point(ltx+blkw*3, lty+blkh*2), new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*3)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw*3, lty+blkh*2), new Point(ltx+blkw*4, lty+blkh*2), new Point(ltx+blkw*4, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*3)));
 
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx, lty+blkh*3), new Point(ltx+blkw, lty+blkh*3), new Point(ltx+blkw, lty+blkh*4), new Point(ltx, lty+blkh*4)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw, lty+blkh*4)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*4)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*4, lty+blkh*3), new Point(ltx+blkw*4, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*4)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx, lty+blkh*3), new Point(ltx+blkw, lty+blkh*3), new Point(ltx+blkw, lty+blkh*4), new Point(ltx, lty+blkh*4)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw, lty+blkh*4)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw*2, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*4)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw*3, lty+blkh*3), new Point(ltx+blkw*4, lty+blkh*3), new Point(ltx+blkw*4, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*4)));
 
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx, lty+blkh*4), new Point(ltx+blkw, lty+blkh*4), new Point(ltx+blkw, lty+blkh*5), new Point(ltx, lty+blkh*5)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw, lty+blkh*5)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*5)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*4, lty+blkh*4), new Point(ltx+blkw*4, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*5)));    	
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx, lty+blkh*4), new Point(ltx+blkw, lty+blkh*4), new Point(ltx+blkw, lty+blkh*5), new Point(ltx, lty+blkh*5)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw, lty+blkh*5)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw*2, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*5)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw*3, lty+blkh*4), new Point(ltx+blkw*4, lty+blkh*4), new Point(ltx+blkw*4, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*5)));    	
 
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx, lty+blkh*5), new Point(ltx+blkw, lty+blkh*5), new Point(ltx+blkw, lty+blkh*6), new Point(ltx, lty+blkh*6)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw, lty+blkh*6)));
-    	fieldBlocksTable.add(new RectangleBlockDash(new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*6), new Point(ltx+blkw*2, lty+blkh*6)));
-    	fieldBlocksTable.add(new RectangleBlock(new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*4, lty+blkh*5), new Point(ltx+blkw*4, lty+blkh*6), new Point(ltx+blkw*3, lty+blkh*6)));    	
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx, lty+blkh*5), new Point(ltx+blkw, lty+blkh*5), new Point(ltx+blkw, lty+blkh*6), new Point(ltx, lty+blkh*6)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw, lty+blkh*6)));
+    	fieldBlocksContainer.add(new RectangleBlockDash(new Point(ltx+blkw*2, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*3, lty+blkh*6), new Point(ltx+blkw*2, lty+blkh*6)));
+    	fieldBlocksContainer.add(new RectangleBlock(new Point(ltx+blkw*3, lty+blkh*5), new Point(ltx+blkw*4, lty+blkh*5), new Point(ltx+blkw*4, lty+blkh*6), new Point(ltx+blkw*3, lty+blkh*6)));    	
 
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw*2, lty+blkh*7)));
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7)));    	
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
-    	fieldBlocksTable.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw*2, lty+blkh*7)));
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7)));    	
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
+    	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
     	
+    	// fill up the positions to draw player.
     	groundPositionsArrayList.clear();
+    	groundPositionsArrayList.add(new Position(new Point(0, 0)));
 
-    	groundPositionsArrayList.add(new Point(ltx+blkw, lty));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*1.5, lty+blkh));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2.5, lty+blkh));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*1.5, lty+blkh)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2.5, lty+blkh)));
            	
-       	groundPositionsArrayList.add(new Point(ltx, lty+blkh*2));
-       	groundPositionsArrayList.add(new Point(ltx+blkw, lty+blkh*2));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*2));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*2));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*4, lty+blkh*2));
+       	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*2)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*2)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*2)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*2)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*2)));
 
-       	groundPositionsArrayList.add(new Point(ltx, lty+blkh*3));
-       	groundPositionsArrayList.add(new Point(ltx+blkw, lty+blkh*3));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*3));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*3));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*4, lty+blkh*3));
+       	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*3)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*3)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*3)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*3)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*3)));
 
-       	groundPositionsArrayList.add(new Point(ltx, lty+blkh*4));
-       	groundPositionsArrayList.add(new Point(ltx+blkw, lty+blkh*4));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*4));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*4));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*4, lty+blkh*4));
+       	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*4)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*4)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*4)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*4)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*4)));
 
-       	groundPositionsArrayList.add(new Point(ltx, lty+blkh*5));
-       	groundPositionsArrayList.add(new Point(ltx+blkw, lty+blkh*5));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*5));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*5));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*4, lty+blkh*5));
+       	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*5)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*5)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*5)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*5)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*5)));
 
-       	groundPositionsArrayList.add(new Point(ltx, lty+blkh*6));
-       	groundPositionsArrayList.add(new Point(ltx+blkw, lty+blkh*6));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*6));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*6));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*4, lty+blkh*6));
+       	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*6)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*6)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*6)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*6)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*6)));
 
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*7));
-       	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*6));
-     	groundPositionsArrayList.add(new Point(ltx+blkw*3, lty+blkh*7));
-    	groundPositionsArrayList.add(new Point(ltx+blkw*2, lty+blkh*8));    	
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*7)));
+       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*6)));
+     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*7)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
     }
 
     public void drawGameBoard(final Context2d context) {
@@ -101,14 +104,14 @@ public class GameBoard {
     }
 
     private int getFieldBlocksSize() {
-    	return fieldBlocksTable.size();
+    	return fieldBlocksContainer.size();
     }
 
     private FieldBlock getFieldBlock(int i) {
-    	return fieldBlocksTable.get(i);
+    	return fieldBlocksContainer.get(i);
     }
 
-    private ArrayList<Point> getGroundPositionsArrayList() {
+    private ArrayList<Position> getGroundPositionsArrayList() {
     	return groundPositionsArrayList;
     }
 
@@ -116,21 +119,34 @@ public class GameBoard {
     	return getGroundPositionsArrayList().size();
     }
     
-    private Point getPoint(int index) {
+    private Point getPositionPoint(int index) {
+    	return getPosition(index).getPoint();
+    }
+
+    private Position getPosition(int index) {
     	return getGroundPositionsArrayList().get(index);
     }
-    
+ 
     public int pickPlayPosition(Point rawPoint) {
 		int pos = 0;
 		try {
 			int count = getGroundPositionsSize() - 1;
 			for (int i= 0; i<count; i++) {
-				pos = FieldBlock.poinsDistance(getPoint(i), rawPoint) > (FieldBlock.poinsDistance(getPoint(i+1), rawPoint)) ? (i) : (i+1);
+				pos = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) > (FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) ? (i) : (i+1);
 			}
 		} catch (IndexOutOfBoundsException e) {
 			throw new IndexOutOfBoundsException("ERROR");
 		}
 
-		return pos;    
+		return pos;
 	}
+
+    public void animateIn(final int index, Context2d context, ImageElement element) {
+    	getPosition(index).addAnimate(context, element);
+    	getPosition(index).drawAnimate(context);
+    }
+    
+    public void animateOut(final int index, Context2d context) {
+    	getPosition(index).removeAnimate(context);
+    }    
 }
