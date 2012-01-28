@@ -171,10 +171,12 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
 		Collection c = (Collection) q.execute();
 		mLogger.warning("[Game number]filter:" + c.size());
-		long prevGameId = gameId - 1;
-		Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
-		Collection cp = (Collection) qp.execute();
-		mLogger.warning("[Game number]filter:" + cp.size());
+		if (gameId > 1) {
+			long prevGameId = gameId - 1;
+			Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
+			Collection cp = (Collection) qp.execute();
+			mLogger.warning("[Game number]filter:" + cp.size());
+		}
 		// ---------DEBUG-----------
 
 		return true;
