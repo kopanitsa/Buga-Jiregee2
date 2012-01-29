@@ -94,7 +94,7 @@ public class PushServer {
     // and merging them together. This approach seems a bit crappy,
     // but less crappy than the other alternatives.
 
-    File[] files = new File("BugaJiregee2").listFiles(new FilenameFilter() {
+    File[] files = new File("bugajiregee2").listFiles(new FilenameFilter() {
       public boolean accept(File dir, String name) {
         return name.endsWith(".gwt.rpc");
       }
