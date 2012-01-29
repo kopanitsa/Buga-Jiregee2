@@ -49,51 +49,61 @@ public class GameBoard {
     	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*6), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7)));    	
     	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
     	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*2, lty+blkh*7), new Point(ltx+blkw*3, lty+blkh*7), new Point(ltx+blkw*2, lty+blkh*8)));
-    	
-    	// fill up the positions to draw player.
+
+    	// Generate the positions to draw players.
     	groundPositionsArrayList.clear();
     	groundPositionsArrayList.add(new Position(new Point(0, 0)));
 
+    	// Flat valley.
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*1.5, lty+blkh)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2.5, lty+blkh)));
-           	
+
+    	// Row one ground.
        	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*2)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*2)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*2)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*2)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*2)));
 
+    	// Row two ground.
        	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*3)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*3)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*3)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*3)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*3)));
 
+    	// Row three ground.
        	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*4)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*4)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*4)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*4)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*4)));
 
+    	// Row four ground.
        	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*5)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*5)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*5)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*5)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*5)));
 
+    	// Row five ground.
        	groundPositionsArrayList.add(new Position(new Point(ltx, lty+blkh*6)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*6)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*6)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*6)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*6)));
 
+    	// Steep valley.
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*7)));
        	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*6)));
      	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*7)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
+
+    	// Nest of dog.
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
     }
 

@@ -54,9 +54,10 @@ public class GameGroundPanel extends HorizontalPanel {
 	public GameGroundPanel() {
 	    asyncServiceHandler = GameService.App.getInstance();
 	
+	    
 		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		setSize(Integer.toString(GAMEGROUND_WIDTH), Integer.toString(GAMEGROUND_HEIGHT));
-	    
+		
 	    VerticalPanel gameBoardPanel = new VerticalPanel();
 	    gameBoardPanel.setSize(Integer.toString(GAMEBOARD_WIDTH), Integer.toString(GAMEBOARD_HEIGHT));
 	    add(gameBoardPanel);
@@ -79,27 +80,36 @@ public class GameGroundPanel extends HorizontalPanel {
 	    dogCountPanel.setSize(Integer.toString(SIDEBOARD_WIDTH), Integer.toString(SIDEBOARD_HEIGHT));
 
 		Button dogButton = new Button("Dog Comes");
+		dogButton.setPixelSize(100, 35);		
 		dogButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				event.getClientX();
-				//drawRect();
+				if (checkIfPlayTurn()) {
+					int buttonX = event.getRelativeX(canvas.getElement());
+					int buttonY = event.getRelativeY(canvas.getElement());
+					GWT.log("Dog clicked (X, Y) is " + Integer.toString(buttonX)+ ", " +  Integer.toString(buttonY));
+
+					// Hook the ready dogs to jump in.
+					getAccessiblePositins().add(new Integer(36));
+					getNextPositions(36);
+					setPlayTurnOff();
+				}				
 			}
 		});
-		dogCountPanel.add(dogButton);		
+		dogCountPanel.add(dogButton);
 
 		initHandlers();
 		initAsyncCallbackHanlders();
 
 	    final Image imageDog = new Image("images/JiregeeDog.png");
 	    add(imageDog);
-	    imageDog.setSize("24", "24");
+	    imageDog.setSize("36", "36");
 	    imageDog.addLoadHandler(new LoadHandler() {
 	    	  public void onLoad(LoadEvent event) {
 		    	  elementDog = (ImageElement) imageDog.getElement().cast();
 	    	  }
 	    	});
 	    imageDog.setVisible(false);
-	    
+
 	    final Image imageDeer = new Image("images/JiregeeDeer.png");
 	    add(imageDeer);
 	    imageDeer.setSize("36", "36");
@@ -111,22 +121,17 @@ public class GameGroundPanel extends HorizontalPanel {
 	    imageDeer.setVisible(false);
 	}
 
-	void createGroundPositionsArrayList() {
-	}
-
 	private void initHandlers() {
 		canvas.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if (isPlayTurn) {
+				if (checkIfPlayTurn()) {
 					mouseX = event.getRelativeX(canvas.getElement());
 					mouseY = event.getRelativeY(canvas.getElement());
-					GWT.log("initHandlers() : mouseX, mouseX is " + Integer.toString(mouseX)+ ", " +  Integer.toString(mouseY));
+					GWT.log("Game board clicked (X, Y) is " + Integer.toString(mouseX)+ ", " +  Integer.toString(mouseY));
+
+					// Pick up a valid position to the stack.
 					validateClickedPosition(new Point(mouseX, mouseY));
 				}
-				
-				//int dummyFrom = Random.nextInt(36);
-				//int dummyTo = Random.nextInt(36%4);
-				//palyerMove(dummyFrom, dummyTo);
 			}
 		});
 	}
@@ -134,26 +139,23 @@ public class GameGroundPanel extends HorizontalPanel {
 	private void initAsyncCallbackHanlders() {
 		movePlayerCallback =  new AsyncCallback <Boolean> (){
 		    public void onFailure(Throwable caught) {
-		      GWT.log("Failed to get response from server" + caught.getMessage());
+		      GWT.log("movePlayerCallback() movePlayerCallback() failed : " + caught.getMessage());
 		    }
 
 		    public void onSuccess(Boolean result) {
-		      GWT.log(Boolean.toString(result));
+		      GWT.log("movePlayerCallback() successed");
 		    }
 		};
 
 		getPositionsCallback =  new AsyncCallback <int[]> (){
 		    public void onFailure(Throwable caught) {
-		      GWT.log("Failed to get response from server" + caught.getMessage());
+		      GWT.log("getPositionsCallback() failed : " + caught.getMessage());
 		    }
 
 		    public void onSuccess(int[] results) {
-		    	int num = results.length;
-		    	getAccessiblePositins().clear();
-		    	for (int i=0; i<num; i++) {
-		    		getAccessiblePositins().add(new Integer(results[i]));		    		
-		    	}
-		    	GWT.log(Integer.toString(results.length));
+		    	GWT.log("getPositionsCallback successed.");
+		    	refreshAccessiblePositions(results);
+		    	setPlayTurnOn();
 		    }
 		};
 	}
@@ -165,18 +167,16 @@ public class GameGroundPanel extends HorizontalPanel {
 	private void getNextPositions(int currentPosition) {
 		asyncServiceHandler.getAccessiblePoints(currentPosition, getPositionsCallback);
 	}
-
-	private void playStart() {
-		getNextPositions(36);
-	}
 	
 	/**
 	 * Receives messages pushed from the server.
 	 */
 	public void receiveMsg(Message msg) {
+		GWT.log("receiveMsg() : " + String.valueOf(msg.getType()));
+
 		switch (msg.getType()) {
 		case GAME_BEGIN:
-			getNextPositions(0);
+			//getNextPositions(0);
 			break;
 
 		case UPDATE_BOARD:
@@ -211,27 +211,16 @@ public class GameGroundPanel extends HorizontalPanel {
 	}
 
 	private void turnChanged(TurnChangedMessage msg) {
+		GWT.log("turnChanged() called.");
 		int[] movablePieces = msg.getMovablePieces();
 		refreshAccessiblePositions(movablePieces);
-		isPlayTurn = true;
-
-		GameServiceAsync gameService = GameService.App.getInstance();
-
-		gameService.getAccessiblePoints(movablePieces[0], new AsyncCallback<int[]>() {
-			public void onFailure(Throwable caught) {
-				GWT.log("Failure: " + caught.getMessage());
-			}
-
-			public void onSuccess(int[] result) {
-				for(int i=0; i<result.length; i++) {
-					GWT.log((Integer.toString(result[i]) + " = " + Integer.toString(result[i])));
-				}
-			}
-		});
+		setPlayTurnOn();
 	}
 
 	private void validateClickedPosition(final Point clickPoint) {
 		int index = gameBoard.pickPlayPosition(clickPoint);
+    	GWT.log("validateClickedPosition() : " + String.valueOf(index) );
+
 		if (getAccessiblePositins().contains(new Integer(index))) {
 
 			if (!getValidPostions().contains(new Integer(index))) {
@@ -252,6 +241,7 @@ public class GameGroundPanel extends HorizontalPanel {
 	synchronized private void refreshAccessiblePositions(int[] accessibles) {
 		getAccessiblePositins().clear();
 		for (int i=0; i<accessibles.length; i++) {
+			GWT.log("refreshAccessiblePositions() accessible points : " + String.valueOf(accessibles[i]));
 			getAccessiblePositins().add(new Integer(accessibles[i]));
 		}
 	}
@@ -266,7 +256,6 @@ public class GameGroundPanel extends HorizontalPanel {
 
     private void updateGroundPositions(UpdateBoardInfo info) {
     	ImageElement element = (info.playerType == PieceType.DOG) ? (elementDog) : (elementDeer);
-
     	if (info.beforePos == 36) {
         	gameBoard.animateIn(info.afterPos, context, element);
     	} else {
@@ -276,4 +265,16 @@ public class GameGroundPanel extends HorizontalPanel {
 			}
     	}
     }
+
+    synchronized private void setPlayTurnOff() {
+    	isPlayTurn = false;
+    }
+ 
+    synchronized private void setPlayTurnOn() {
+    	isPlayTurn = true;
+    }
+    
+    private boolean checkIfPlayTurn() {
+    	return isPlayTurn;
+    }    
 }
