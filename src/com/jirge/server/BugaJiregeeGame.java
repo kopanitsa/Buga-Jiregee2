@@ -170,6 +170,7 @@ public class BugaJiregeeGame implements Serializable {
 					return true;
 				}
 			} else {
+				int fromPointIndex = piece.getPointIndex().intValue();
 //				BugaJiregeePiece removedPiece = piece.moveTo(toPoint);
 				BugaJiregeePiece removedPiece = null;
 //				BugaJiregeePoint piecePos = piece.getPoint();
@@ -196,7 +197,6 @@ public class BugaJiregeeGame implements Serializable {
 				}
 //				return null;
 				lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
-				int fromPointIndex = piece.getPointIndex().intValue();
 				lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPointIndex, toPoint.getIndex()));
 
 				if (removedPiece != null) {
