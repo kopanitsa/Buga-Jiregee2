@@ -20,11 +20,17 @@ public class Position {
 		animate = null;
 	}
 
-	public void drawAnimate(Context2d context) {
+	private void drawAnimate(Context2d context) {
 		context.drawImage(animate, (position.getX() - animate.getWidth()/2), (position.getY() - animate.getHeight()/2));
 	}
 	
 	public Point getPoint() {
 		return position;
+	}
+
+	public void refreshAnimate(Context2d context) {
+		if (animate != null) {
+			drawAnimate(context);
+		}
 	}
 }

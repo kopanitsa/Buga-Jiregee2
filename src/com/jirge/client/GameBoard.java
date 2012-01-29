@@ -107,7 +107,7 @@ public class GameBoard {
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
     }
 
-    public void drawGameBoard(final Context2d context) {
+    private void drawGameBoard(final Context2d context) {
     	for (int i=0; i<getFieldBlocksSize(); i++) {
     		getFieldBlock(i).drawBlock(context);
     	}
@@ -142,7 +142,10 @@ public class GameBoard {
 		try {
 			int count = getGroundPositionsSize() - 1;
 			for (int i= 0; i<count; i++) {
-				pos = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) > (FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) ? (i) : (i+1);
+				//pos = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) < (FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) ? (i) : (i+1);
+				if (FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) > FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) {
+					pos = i+1;
+				}
 			}
 		} catch (IndexOutOfBoundsException e) {
 			throw new IndexOutOfBoundsException("ERROR");
@@ -153,10 +156,17 @@ public class GameBoard {
 
     public void animateIn(final int index, Context2d context, ImageElement element) {
     	getPosition(index).addAnimate(context, element);
-    	getPosition(index).drawAnimate(context);
+    	getPosition(index).refreshAnimate(context);
     }
     
     public void animateOut(final int index, Context2d context) {
     	getPosition(index).removeAnimate(context);
-    }    
+    }
+
+    public void refreshAnimate(Context2d context) {
+    	drawGameBoard(context);
+    	for (Position position : getGroundPositionsArrayList()) {
+    		position.refreshAnimate(context);
+    	}
+    }
 }

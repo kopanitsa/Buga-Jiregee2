@@ -71,7 +71,7 @@ public class GameGroundPanel extends HorizontalPanel {
 		gameBoardPanel.add(canvas);
 
 		gameBoard = new GameBoard(new Point(0, 0), GAMEBOARD_BLOCKWIDTH, GAMEBOARD_BLOCKHEIGHT);
-		gameBoard.drawGameBoard(context);
+		gameBoard.refreshAnimate(context);
 
 	    VerticalPanel dogCountPanel = new VerticalPanel();
 	    dogCountPanel.setSpacing(GAMEGROUND_SPACE);
@@ -207,6 +207,7 @@ public class GameGroundPanel extends HorizontalPanel {
 			GWT.log("player type : " + info.playerType + ", before : "
 					+ info.beforePos + ", after : " + info.afterPos);
 			updateGroundPositions(info);
+			refresGameBoard(context);
 		}
 	}
 
@@ -276,5 +277,9 @@ public class GameGroundPanel extends HorizontalPanel {
     
     private boolean checkIfPlayTurn() {
     	return isPlayTurn;
-    }    
+    }
+ 
+    private void refresGameBoard(Context2d context) {
+		gameBoard.refreshAnimate(context);
+    }
 }

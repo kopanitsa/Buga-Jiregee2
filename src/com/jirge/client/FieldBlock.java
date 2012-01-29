@@ -48,12 +48,16 @@ public class FieldBlock {
 	public int getSize() {
 		return pointsArrayList.size();
 	}
-	
+
 	public static double poinsDistance(Point pX, Point pY) {
-		return Math.sqrt((pY.getX() - pX.getX()) * (pY.getX() - pX.getX())) + ((pY.getY() - pX.getY()) * (pY.getY() - pX.getY()));
+		GWT.log("poinsDistance() position point (X, Y) " + String.valueOf(pX.getX()) + "," + String.valueOf(pX.getY()));
+		double distance = Math.sqrt(((pY.getX() - pX.getX()) * (pY.getX() - pX.getX())) + ((pY.getY() - pX.getY()) * (pY.getY() - pX.getY())));
+		GWT.log("poinsDistance() " + String.valueOf(distance));
+		//return Math.sqrt((pY.getX() - pX.getX()) * (pY.getX() - pX.getX())) + ((pY.getY() - pX.getY()) * (pY.getY() - pX.getY()));
+		return distance;
 	}
 
-	public Point playerPosition(Point clickPoint) {
+	private Point playerPosition(Point clickPoint) {
 		Point point = null;
 
 		try {
