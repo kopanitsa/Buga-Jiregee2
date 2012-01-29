@@ -37,7 +37,8 @@ public class PushServer {
     List<String> playerKeys = new ArrayList<String>();
 
     for (Player player : players) {
-      playerKeys.add(player.getKey());
+      //playerKeys.add(player.getKey());
+      playerKeys.add(player.getName());
     }
 
     sendMessageByKey(playerKeys, msg);
@@ -70,7 +71,8 @@ public class PushServer {
    * @param msg The message to be sent.
    */
   public static void sendMessage(Player player, Message msg) {
-    sendMessageByKey(Arrays.asList(player.getKey()), msg);
+    //sendMessageByKey(Arrays.asList(player.getKey()), msg);
+    sendMessageByKey(Arrays.asList(player.getName()), msg);
   }
 
   /**
@@ -81,7 +83,8 @@ public class PushServer {
    * @return the client channel id
    */
   public static String createChannel(Player player) {
-    String channelId = getChannelService().createChannel(player.getKey());
+    //String channelId = getChannelService().createChannel(player.getKey());
+    String channelId = getChannelService().createChannel(player.getName());
     logger.warning("Returning new channel " + channelId + " for player " + player.getName());
     return channelId;
   }
