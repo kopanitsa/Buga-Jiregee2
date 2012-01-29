@@ -1,12 +1,6 @@
 package com.jirge.server;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -16,6 +10,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.jirge.shared.PieceType;
 
+@SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeePiece implements Serializable {
 

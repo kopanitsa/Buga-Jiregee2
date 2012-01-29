@@ -9,6 +9,7 @@ import com.jirge.server.BugaJiregeeGame;
 import com.jirge.server.BugaJiregeePiece;
 import com.jirge.server.Player;
 import com.jirge.server.PushServer;
+import com.jirge.shared.BoardIndex;
 import com.jirge.shared.message.TurnChangedMessage;
 import com.newatlanta.appengine.taskqueue.Deferred;
 
@@ -25,7 +26,11 @@ public class TurnChanged implements Deferred.Deferrable {
 		int[] movableIndexes = new int[movablePieces.size()];
 		for (int i = 0; i < movableIndexes.length; i++) {
 //			movableIndexes[i] = movablePieces.get(i).getPoint().getIndex();
-			movableIndexes[i] = movablePieces.get(i).getPointIndex();
+			if (movablePieces.get(i).isStocked()) {
+				movableIndexes[i] = BoardIndex.STOCKED_DOG;
+			} else {
+				movableIndexes[i] = movablePieces.get(i).getPointIndex();
+			}
 		}
 		int playerIndex = game.getCurrentPlayerIndex();
 		Player player = game.getPlayers().get(playerIndex);

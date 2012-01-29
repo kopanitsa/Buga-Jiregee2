@@ -3,7 +3,6 @@ package com.jirge.server;
 import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.*;
 import static com.newatlanta.appengine.taskqueue.Deferred.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
@@ -26,12 +25,10 @@ import com.jirge.server.tasks.StartGame;
 import com.jirge.server.tasks.TurnChanged;
 import com.jirge.server.tasks.UpdateBoard;
 import com.jirge.shared.LoginResults;
-import com.jirge.shared.PieceType;
 import com.jirge.shared.UpdateBoardInfo;
-import com.jirge.shared.message.Message;
-import com.jirge.shared.message.TmpMessage;
 import com.jirge.util.JdoUtil;
 
+@SuppressWarnings("serial")
 public class GameServiceImpl extends RemoteServiceServlet implements
 		GameService {
 
@@ -106,31 +103,26 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		return new LoginResults(null, channelId, estimatedStartTime);
 	}
 
-	public List<Message> confirmLogin() {
-		BugaJiregeeGame game = getGameForSession();
-		List<Message> messages = new ArrayList<Message>();
-		// TODO
-		messages.add(new TmpMessage());
-		return messages;
-	}
-
 	public int[] getAccessiblePoints(int index) {
+		mLogger.warning("getAccessiblePoints start, index=" + index);
 		BugaJiregeeGame game = getGameForSession();
 		BugaJiregeePiece piece = game.getPieceByPointIndex(index);
 		List<BugaJiregeePoint> pointList = game.getAccessiblePoints(piece);
 		int[] accessiblePoints = new int[pointList.size()];
+		mLogger.warning("getAccessiblePoints, size=" + accessiblePoints.length);
 		for (int i = 0; i < accessiblePoints.length; i++) {
 			accessiblePoints[i] = pointList.get(i).getIndex();
 		}
+		mLogger.warning("getAccessiblePoints end");
 		return accessiblePoints;
 	}
 
-	public boolean movePiece(int fromIndex, int toIndex) {
+	public Boolean movePiece(int fromIndex, int toIndex) {
 		BugaJiregeeGame game = getGameForSession();
 		BugaJiregeePiece piece = game.getPieceByPointIndex(fromIndex);
 		BugaJiregeePoint toPoint = game.getBoard().getPoint(toIndex);
 
-		boolean moveSuccess = game.movePiece(piece, toPoint);
+		Boolean moveSuccess = game.movePiece(piece, toPoint);
 
 		if (moveSuccess) {
 			List<UpdateBoardInfo> updateBoardInfo = game

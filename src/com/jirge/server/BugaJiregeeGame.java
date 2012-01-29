@@ -14,8 +14,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.jirge.shared.BoardIndex;
 import com.jirge.shared.UpdateBoardInfo;
 
+@SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class BugaJiregeeGame implements Serializable {
 
@@ -90,7 +92,7 @@ public class BugaJiregeeGame implements Serializable {
 	}
 
 	public BugaJiregeePiece getPieceByPointIndex(int pointIndex) {
-		if (pointIndex >= 0 && pointIndex < 36) {	// TODO : not to use the magic number.
+		if (pointIndex >= 0 && pointIndex < BoardIndex.STOCKED_DOG) {
 //			BugaJiregeePoint point = this.board.getPoint(pointIndex);
 //			if (point != null) {
 //				return point.getPiece();
@@ -104,7 +106,7 @@ public class BugaJiregeeGame implements Serializable {
 					}
 				}
 			}
-		} else if (pointIndex == 36) {	// TODO : not to use the magic number.
+		} else if (pointIndex == BoardIndex.STOCKED_DOG) {
 			Player currentPlayer = players.get(this.currentPlayerIndex);
 			List<BugaJiregeePiece> pieces = currentPlayer.getPieces();
 			for (BugaJiregeePiece piece : pieces) {
@@ -153,18 +155,18 @@ public class BugaJiregeeGame implements Serializable {
 
 	public boolean movePiece(BugaJiregeePiece piece, BugaJiregeePoint toPoint) {
 //		BugaJiregeePoint fromPoint = piece.getPoint();
-		BugaJiregeePoint fromPoint = this.board.getPoint(piece.getPointIndex().intValue());
 
 		if (this.players.get(this.currentPlayerIndex).getPieces().contains(piece)) {
 			if (piece.isStocked()) {
 //				if (this.board.getEmptyPoints().contains(toPoint)) {
+				int fromPointIndex = BoardIndex.STOCKED_DOG;
 				if (getEmptyPoints().contains(toPoint)) {
 //					piece.setPoint(toPoint);
 					piece.setPointIndex(new Integer(toPoint.getIndex()));
 					piece.setStocked(false);
 					currentPlayerIndex = (currentPlayerIndex + 1) % 2;	// 0, 1, 0, 1, ...
 					lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
-					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPoint.getIndex(), toPoint.getIndex()));
+					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPointIndex, toPoint.getIndex()));
 					return true;
 				}
 			} else {
@@ -194,7 +196,8 @@ public class BugaJiregeeGame implements Serializable {
 				}
 //				return null;
 				lastUpdatedBoardInfo = new ArrayList<UpdateBoardInfo>();
-				lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPoint.getIndex(), toPoint.getIndex()));
+				int fromPointIndex = piece.getPointIndex().intValue();
+				lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), fromPointIndex, toPoint.getIndex()));
 
 				if (removedPiece != null) {
 //					lastUpdatedBoardInfo.add(new UpdateBoardInfo(piece.getType(), removedPiece.getPoint().getIndex(), 0));
@@ -227,14 +230,14 @@ public class BugaJiregeeGame implements Serializable {
 //					piece.setPoint(this.board.getPoint(INIT_DEER_POINTS[i]));
 //					lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DEER, 0, piece.getPoint().getIndex()));
 					piece.setPointIndex(new Integer(INIT_DEER_POINTS[i]));
-					lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DEER, 0, piece.getPointIndex().intValue()));
+					lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DEER, BoardIndex.OUT_OF_BOARD, piece.getPointIndex().intValue()));
 					break;
 				case BugaJiregeePiece.TYPE_DOG:
 					if (i < INIT_DOG_POINTS.length) {
 //						piece.setPoint(this.board.getPoint(INIT_DOG_POINTS[i]));
 //						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, 0, piece.getPoint().getIndex()));
 						piece.setPointIndex(new Integer(INIT_DOG_POINTS[i]));
-						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, 0, piece.getPointIndex()));
+						lastUpdatedBoardInfo.add(new UpdateBoardInfo(BugaJiregeePiece.TYPE_DOG, BoardIndex.OUT_OF_BOARD, piece.getPointIndex()));
 						piece.setStocked(false);
 					} else {
 						piece.setPointIndex(null);

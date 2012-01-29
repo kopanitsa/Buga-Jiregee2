@@ -8,42 +8,40 @@ import javax.jdo.Transaction;
 import javax.servlet.ServletException;
 
 import com.jirge.server.BugaJiregeeGame;
-import com.jirge.server.GameServiceImpl;
 import com.jirge.server.PushServer;
 import com.jirge.shared.message.GameBeginMessage;
 import com.jirge.util.JdoUtil;
 import com.newatlanta.appengine.taskqueue.Deferred;
 
+@SuppressWarnings("serial")
 public class StartGame implements Deferred.Deferrable {
-  private final long gameId;
-  public StartGame(long gameId) {
-    this.gameId = gameId;
-  }
+	private final long gameId;
 
-  public void doTask() throws ServletException, IOException {
-    PersistenceManager pm = JdoUtil.getPm();
-    Transaction tx = pm.currentTransaction();
+	public StartGame(long gameId) {
+		this.gameId = gameId;
+	}
 
-    BugaJiregeeGame game;
-    try {
-      tx.begin();
-      Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
-      game = JdoUtil.queryFirst(q, BugaJiregeeGame.class);
-     if (game.getState() == BugaJiregeeGame.State.IN_PROGRESS) {
-        // Already started, nothing to do.
-        return;
-      }
-      game.setState(BugaJiregeeGame.State.IN_PROGRESS);
-      tx.commit();
-    } finally {
-      if (tx.isActive()) {
-        tx.rollback();
-      }
-    }
+	public void doTask() throws ServletException, IOException {
+		PersistenceManager pm = JdoUtil.getPm();
+		Transaction tx = pm.currentTransaction();
 
-    PushServer.sendMessage(game.getPlayers(), new GameBeginMessage());
+		BugaJiregeeGame game;
+		try {
+			tx.begin();
+			Query q = pm.newQuery(BugaJiregeeGame.class, "id == " + gameId);
+			game = JdoUtil.queryFirst(q, BugaJiregeeGame.class);
+			if (game.getState() == BugaJiregeeGame.State.IN_PROGRESS) {
+				// Already started, nothing to do.
+				return;
+			}
+			game.setState(BugaJiregeeGame.State.IN_PROGRESS);
+			tx.commit();
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
 
-    Deferred.defer(new SendGameBegin(/*game, SendGameBegin.createRandomDance(0)*/), 
-        GameServiceImpl.getTaskOptions().countdownMillis(1000));
-  }
+		PushServer.sendMessage(game.getPlayers(), new GameBeginMessage());
+	}
 }

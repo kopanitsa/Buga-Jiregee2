@@ -1,12 +1,9 @@
 package com.jirge.client;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.core.client.GWT;
 import com.jirge.shared.LoginResults;
-import com.jirge.shared.message.Message;
 
 @RemoteServiceRelativePath("game_service")
 public interface GameService extends RemoteService {
@@ -36,14 +33,6 @@ public interface GameService extends RemoteService {
 	LoginResults login(String name, Long gameId);
 
 	/**
-	 * Confirms a successfully opened channel for the player in this session.
-	 * 
-	 * @return a list of {@code Messages} that should catch the player up to the
-	 *         current game state.
-	 */
-	List<Message> confirmLogin();
-
-	/**
 	 * Get the list of accessible point of selected piece.
 	 * 
 	 * @return a list of indexes of board that the selected piece can move to.
@@ -55,6 +44,6 @@ public interface GameService extends RemoteService {
 	 * 
 	 * @return success or fail
 	 */
-	boolean movePiece(int fromIndex, int toIndex);
+	Boolean movePiece(int fromIndex, int toIndex);
 
 }
