@@ -5,12 +5,12 @@ import com.google.gwt.core.client.GWT;
 
 public class TriangleBlock extends FieldBlock {
 
-	TriangleBlock(Point... points) {
+	TriangleBlock(final Point... points) {
 		super(points);
 	}
 
 	@Override
-	public void drawBlock(Context2d context) {
+	public void drawBlock(final Context2d context) {
 		if (context == null) {
 			GWT.log(this.getClass().getName() + " : " + "invalid context.");
 			return;

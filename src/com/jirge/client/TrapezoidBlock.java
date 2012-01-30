@@ -5,12 +5,12 @@ import com.google.gwt.core.client.GWT;
 
 public class TrapezoidBlock extends FieldBlock {
 	
-	public TrapezoidBlock(Point... points) {
+	public TrapezoidBlock(final Point... points) {
 		super(points);
 	}
 	
 	@Override
-	public void drawBlock(Context2d context) {
+	public void drawBlock(final Context2d context) {
 		if (context == null) {
 			GWT.log(this.getClass().getName() + " : " + "invalid context.");
 			return;

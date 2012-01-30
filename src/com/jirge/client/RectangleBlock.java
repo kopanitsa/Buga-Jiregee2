@@ -1,7 +1,6 @@
 package com.jirge.client;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.core.client.GWT;
 
 public class RectangleBlock extends FieldBlock {
@@ -11,7 +10,7 @@ public class RectangleBlock extends FieldBlock {
 	}
 
 	@Override
-	public void drawBlock(Context2d context) {
+	public void drawBlock(final Context2d context) {
 		if (context == null) {
 			GWT.log(this.getClass().getName() + " : " + "invalid context.");
 			return;

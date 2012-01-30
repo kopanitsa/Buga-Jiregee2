@@ -26,8 +26,8 @@ import com.jirge.shared.message.UpdateBoardMessage;
 public class GameGroundPanel extends HorizontalPanel {
 
 	private static final String PIXEL = "px";
-	private static final int GAMEBOARD_BLOCKWIDTH = 70;
-	private static final int GAMEBOARD_BLOCKHEIGHT = 70;
+	private static final int GAMEBOARD_BLOCKWIDTH = 75;
+	private static final int GAMEBOARD_BLOCKHEIGHT = 75;
 	private static final int GAMEBOARD_WIDTH = GAMEBOARD_BLOCKWIDTH*4;
 	private static final int GAMEBOARD_HEIGHT = GAMEBOARD_BLOCKHEIGHT*8;
 	private static final int SIDEBOARD_WIDTH = 100;
@@ -43,7 +43,7 @@ public class GameGroundPanel extends HorizontalPanel {
  
     GameBoard gameBoard;
 	final ArrayList<Integer> accessiblePositionArrayList = new ArrayList<Integer>(0);
-	final ArrayList<Integer> validPositinsArrayList = new ArrayList<Integer>(2);
+	final ArrayList<Integer> validPositinsArrayList = new ArrayList<Integer>(0);
 	volatile boolean isPlayTurn = false;
 
 	Canvas canvas, playerCanvas;
@@ -88,10 +88,16 @@ public class GameGroundPanel extends HorizontalPanel {
 					int buttonY = event.getRelativeY(canvas.getElement());
 					GWT.log("Dog clicked (X, Y) is " + Integer.toString(buttonX)+ ", " +  Integer.toString(buttonY));
 
+					validateClickedPosition(new Point(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
+					
 					// Hook the ready dogs to jump in.
-					getAccessiblePositins().add(new Integer(36));
-					getNextPositions(36);
-					setPlayTurnOff();
+					 //getAccessiblePositins().add(new Integer(36));
+				//	if (!getValidPostions().contains(new Integer(36))) {
+						//getNextPositions(36);
+						//getValidPostions().add(new Integer(36));
+						//setPlayTurnOff();
+					//}
 				}				
 			}
 		});
@@ -100,9 +106,9 @@ public class GameGroundPanel extends HorizontalPanel {
 		initHandlers();
 		initAsyncCallbackHanlders();
 
-	    final Image imageDog = new Image("images/JiregeeDog.png");
+	    final Image imageDog = new Image("images/JirgeDog.png");
 	    add(imageDog);
-	    imageDog.setSize("36", "36");
+	    imageDog.setSize("48px", "48px");
 	    imageDog.addLoadHandler(new LoadHandler() {
 	    	  public void onLoad(LoadEvent event) {
 		    	  elementDog = (ImageElement) imageDog.getElement().cast();
@@ -110,9 +116,9 @@ public class GameGroundPanel extends HorizontalPanel {
 	    	});
 	    imageDog.setVisible(false);
 
-	    final Image imageDeer = new Image("images/JiregeeDeer.png");
+	    final Image imageDeer = new Image("images/JirgeDeer.png");
 	    add(imageDeer);
-	    imageDeer.setSize("36", "36");
+	    imageDeer.setSize("72px", "72px");
 	    imageDeer.addLoadHandler(new LoadHandler() {
 	    	  public void onLoad(LoadEvent event) {
 		    	  elementDeer = (ImageElement) imageDeer.getElement().cast();
@@ -138,18 +144,19 @@ public class GameGroundPanel extends HorizontalPanel {
 
 	private void initAsyncCallbackHanlders() {
 		movePlayerCallback =  new AsyncCallback <Boolean> (){
-		    public void onFailure(Throwable caught) {
-		      GWT.log("movePlayerCallback() movePlayerCallback() failed : " + caught.getMessage());
-		    }
-
-		    public void onSuccess(Boolean result) {
-		      GWT.log("movePlayerCallback() successed");
+			public void onFailure(Throwable caught) {
+		    	GWT.log("movePlayerCallback() movePlayerCallback() failed : " + caught.getMessage());
+	    	}
+		
+			public void onSuccess(Boolean result) {
+				GWT.log("movePlayerCallback() successed");
+		    	setPlayTurnOn();
 		    }
 		};
 
 		getPositionsCallback =  new AsyncCallback <int[]> (){
-		    public void onFailure(Throwable caught) {
-		      GWT.log("getPositionsCallback() failed : " + caught.getMessage());
+			public void onFailure(Throwable caught) {
+				GWT.log("getPositionsCallback() failed : " + caught.getMessage());
 		    }
 
 		    public void onSuccess(int[] results) {
@@ -166,6 +173,7 @@ public class GameGroundPanel extends HorizontalPanel {
 	}
 	
 	private void getNextPositions(int currentPosition) {
+		GWT.log("getNextPositionsmessage() currentPosition: " + String.valueOf(currentPosition));
 		asyncServiceHandler.getAccessiblePoints(currentPosition, getPositionsCallback);
 	}
 	
@@ -220,7 +228,8 @@ public class GameGroundPanel extends HorizontalPanel {
 
 	private void validateClickedPosition(final Point clickPoint) {
 		int index = gameBoard.pickPlayPosition(clickPoint);
-    	GWT.log("validateClickedPosition() : " + String.valueOf(index) );
+    	GWT.log("validateClickedPosition() : position " + String.valueOf(index) );
+    	GWT.log("validateClickedPosition() : posittion array " + String.valueOf(getValidPostions().size()));
 
 		if (getAccessiblePositins().contains(new Integer(index))) {
 
@@ -229,10 +238,15 @@ public class GameGroundPanel extends HorizontalPanel {
 			}
 
 			if (getValidPostions().size() == 1) {
+				GWT.log("getValidPostions().size() 1 " + String.valueOf(getValidPostions().size()));
+				setPlayTurnOff();
 				getNextPositions(getValidPostions().get(0).intValue());
+				return;
 			}
 			
 			if (getValidPostions().size() == 2) {
+				GWT.log("getValidPostions().size() 2 " + String.valueOf(getValidPostions().size()));
+				setPlayTurnOff();
 				palyerMove(getValidPostions().get(0).intValue(), getValidPostions().get(1).intValue());
 				getValidPostions().clear();
 			}
@@ -240,9 +254,11 @@ public class GameGroundPanel extends HorizontalPanel {
 	}
 
 	synchronized private void refreshAccessiblePositions(int[] accessibles) {
+		GWT.log("refreshAccessiblePositions : accessibles " + String.valueOf(accessibles.length));
+
 		getAccessiblePositins().clear();
 		for (int i=0; i<accessibles.length; i++) {
-			GWT.log("refreshAccessiblePositions() accessible points : " + String.valueOf(accessibles[i]));
+			//GWT.log("refreshAccessiblePositions() accessible points : " + String.valueOf(accessibles[i]));
 			getAccessiblePositins().add(new Integer(accessibles[i]));
 		}
 	}
@@ -278,7 +294,7 @@ public class GameGroundPanel extends HorizontalPanel {
     private boolean checkIfPlayTurn() {
     	return isPlayTurn;
     }
- 
+
     private void refreshGameBoard(Context2d context) {
     	context.clearRect(0, 0, GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT);
 		gameBoard.refreshAnimate(context);

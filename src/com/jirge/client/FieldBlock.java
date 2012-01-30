@@ -50,24 +50,7 @@ public class FieldBlock {
 	}
 
 	public static double poinsDistance(Point pX, Point pY) {
-		GWT.log("poinsDistance() position point (X, Y) " + String.valueOf(pX.getX()) + "," + String.valueOf(pX.getY()));
+		//GWT.log("poinsDistance() position point (X, Y) " + String.valueOf(pX.getX()) + "," + String.valueOf(pX.getY()));
 		return Math.sqrt((pY.getX() - pX.getX()) * (pY.getX() - pX.getX())) + ((pY.getY() - pX.getY()) * (pY.getY() - pX.getY()));
-	}
-
-	private Point playerPosition(Point clickPoint) {
-		Point point = null;
-
-		try {
-			int pos = 0;
-			int count = getSize() - 1;
-			for (int i= 0; i<count; i++) {
-				pos = poinsDistance(getPoint(i), clickPoint) > (poinsDistance(getPoint(i+1), clickPoint)) ? (i) : (i+1);
-			}
-			point = getPoint(pos);
-		} catch (IndexOutOfBoundsException e) {
-			throw new IndexOutOfBoundsException("ERROR");
-		}
-
-		return point;
 	}
 }
