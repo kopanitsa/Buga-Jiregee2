@@ -207,7 +207,7 @@ public class GameGroundPanel extends HorizontalPanel {
 			GWT.log("player type : " + info.playerType + ", before : "
 					+ info.beforePos + ", after : " + info.afterPos);
 			updateGroundPositions(info);
-			refresGameBoard(context);
+			refreshGameBoard(context);
 		}
 	}
 
@@ -279,7 +279,8 @@ public class GameGroundPanel extends HorizontalPanel {
     	return isPlayTurn;
     }
  
-    private void refresGameBoard(Context2d context) {
+    public void refreshGameBoard(Context2d context) {
+    	context.clearRect(0, 0, GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT);
 		gameBoard.refreshAnimate(context);
     }
 }

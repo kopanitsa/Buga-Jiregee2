@@ -140,14 +140,17 @@ public class GameBoard {
     public int pickPlayPosition(Point rawPoint) {
 		int pos = 0;
 		try {
-			int count = getGroundPositionsSize() - 1;
+			int count = getGroundPositionsSize();
+			double smaller = Double.MAX_VALUE;
 			for (int i= 0; i<count; i++) {
-				//pos = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) < (FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) ? (i) : (i+1);
-				if (FieldBlock.poinsDistance(getPositionPoint(i), rawPoint) > FieldBlock.poinsDistance(getPositionPoint(i+1), rawPoint)) {
-					pos = i+1;
-				}
+				double compare = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint);
+				if (smaller > compare) {
+					smaller = compare;
+					pos = i;
+				}				
 			}
 		} catch (IndexOutOfBoundsException e) {
+			pos = Integer.MIN_VALUE;
 			throw new IndexOutOfBoundsException("ERROR");
 		}
 
