@@ -125,6 +125,23 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		Boolean moveSuccess = game.movePiece(piece, toPoint);
 
 		if (moveSuccess) {
+			PersistenceManager pm = JdoUtil.getPm();
+			Transaction tx = pm.currentTransaction();
+
+			try {
+				tx.begin();
+				pm.makePersistent(game);
+				tx.commit();
+			} catch (ConcurrentModificationException ex) {
+				// Someone else tried to modify the game at the same time.
+				// Just let the client retry.
+				return new Boolean(false);
+			} finally {
+				if (tx.isActive()) {
+					tx.rollback();
+				}
+			}
+			
 			List<UpdateBoardInfo> updateBoardInfo = game
 					.getLastUpdateBoardInfo();
 			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
