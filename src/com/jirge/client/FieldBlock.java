@@ -20,7 +20,7 @@ public class FieldBlock {
 		}
 	}
 
-	public void drawBlock(Context2d context) {
+	public void drawBlock(final Context2d context) {
 		if (context == null) {
 			return;
 		}

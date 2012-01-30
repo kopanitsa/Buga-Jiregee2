@@ -154,6 +154,7 @@ public class GameGroundPanel extends HorizontalPanel {
 
 		    public void onSuccess(int[] results) {
 		    	GWT.log("getPositionsCallback successed.");
+
 		    	refreshAccessiblePositions(results);
 		    	setPlayTurnOn();
 		    }
@@ -176,7 +177,6 @@ public class GameGroundPanel extends HorizontalPanel {
 
 		switch (msg.getType()) {
 		case GAME_BEGIN:
-			//getNextPositions(0);
 			break;
 
 		case UPDATE_BOARD:
@@ -197,15 +197,15 @@ public class GameGroundPanel extends HorizontalPanel {
 			break;
 
 		default:
-			GWT.log("Unknown game type: " + msg.getType());
+			break;
 		}
 	}
 
 	private void updateBoard(UpdateBoardMessage msg) {
 		List<UpdateBoardInfo> updateInfo = msg.getUpdateInfo();
 		for (UpdateBoardInfo info : updateInfo) {
-			GWT.log("player type : " + info.playerType + ", before : "
-					+ info.beforePos + ", after : " + info.afterPos);
+			GWT.log("player type : " + info.playerType + ", before : " + info.beforePos + ", after : " + info.afterPos);
+
 			updateGroundPositions(info);
 			refreshGameBoard(context);
 		}
@@ -279,7 +279,7 @@ public class GameGroundPanel extends HorizontalPanel {
     	return isPlayTurn;
     }
  
-    public void refreshGameBoard(Context2d context) {
+    private void refreshGameBoard(Context2d context) {
     	context.clearRect(0, 0, GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT);
 		gameBoard.refreshAnimate(context);
     }

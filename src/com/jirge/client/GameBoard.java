@@ -6,8 +6,8 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
 public class GameBoard {
-	ArrayList<FieldBlock> fieldBlocksContainer = new ArrayList<FieldBlock>(0);
-	ArrayList<Position> groundPositionsArrayList = new ArrayList<Position>(0);
+	private ArrayList<FieldBlock> fieldBlocksContainer = new ArrayList<FieldBlock>(0);
+	private ArrayList<Position> groundPositionsArrayList = new ArrayList<Position>(0);
 
 	private int blkw, blkh;
 	private double ltx, lty; 
@@ -18,8 +18,7 @@ public class GameBoard {
     	this.blkw = blockWidth;
     	this.blkh = blockHeight;
 
-    	fieldBlocksContainer.clear();
-    	
+    	fieldBlocksContainer.clear();    	
     	fieldBlocksContainer.add(new TrapezoidBlock(new Point(ltx+blkw, lty), new Point(ltx+blkw*2, lty), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*1.5, lty+blkh)));
     	fieldBlocksContainer.add(new TrapezoidBlock(new Point(ltx+blkw*2, lty), new Point(ltx+blkw*3, lty), new Point(ltx+blkw*2.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh)));
     	fieldBlocksContainer.add(new TriangleBlock(new Point(ltx+blkw*1.5, lty+blkh), new Point(ltx+blkw*2, lty+blkh), new Point(ltx+blkw*2, lty+blkh*2)));
@@ -104,7 +103,7 @@ public class GameBoard {
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
 
     	// Nest of dog.
-    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
+    	groundPositionsArrayList.add(new Position(new Point(Integer.MAX_VALUE, Integer.MAX_VALUE)));
     }
 
     private void drawGameBoard(final Context2d context) {
@@ -138,35 +137,33 @@ public class GameBoard {
     }
  
     public int pickPlayPosition(Point rawPoint) {
-		int pos = 0;
+		int pos = Integer.MIN_VALUE;
 		try {
-			int count = getGroundPositionsSize();
 			double smaller = Double.MAX_VALUE;
-			for (int i= 0; i<count; i++) {
+			for (int i=0; i<getGroundPositionsSize(); i++) {
 				double compare = FieldBlock.poinsDistance(getPositionPoint(i), rawPoint);
 				if (smaller > compare) {
 					smaller = compare;
 					pos = i;
-				}				
+				}
 			}
 		} catch (IndexOutOfBoundsException e) {
-			pos = Integer.MIN_VALUE;
 			throw new IndexOutOfBoundsException("ERROR");
 		}
 
 		return pos;
 	}
 
-    public void animateIn(final int index, Context2d context, ImageElement element) {
+    public void animateIn(int index, final Context2d context, final ImageElement element) {
     	getPosition(index).addAnimate(context, element);
     	getPosition(index).refreshAnimate(context);
     }
-    
+
     public void animateOut(final int index, Context2d context) {
     	getPosition(index).removeAnimate(context);
     }
 
-    public void refreshAnimate(Context2d context) {
+    public void refreshAnimate(final Context2d context) {
     	drawGameBoard(context);
     	for (Position position : getGroundPositionsArrayList()) {
     		position.refreshAnimate(context);
