@@ -20,7 +20,7 @@ public class Position {
 		animate = null;
 	}
 
-	private void drawAnimate(Context2d context) {
+	private void drawAnimate(final Context2d context) {
 		context.drawImage(animate, (position.getX() - animate.getWidth()/2), (position.getY() - animate.getHeight()/2));
 	}
 	
@@ -28,7 +28,7 @@ public class Position {
 		return position;
 	}
 
-	public void refreshAnimate(Context2d context) {
+	public void refreshAnimate(final Context2d context) {
 		if (animate != null) {
 			drawAnimate(context);
 		}

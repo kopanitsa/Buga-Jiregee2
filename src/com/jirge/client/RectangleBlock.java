@@ -12,12 +12,13 @@ public class RectangleBlock extends FieldBlock {
 	@Override
 	public void drawBlock(final Context2d context) {
 		if (context == null) {
-			GWT.log(this.getClass().getName() + " : " + "invalid context.");
+			GWT.log(this.getClass().getName() + " : " + "invalid context");
 			return;
 		}
 
 		if (getSize() < 1) {
-			GWT.log(this.getClass().getName() + " : " + "the points array is empty.");			
+			GWT.log(this.getClass().getName() + " : " + "the points array is empty");
+			return;
 		}
 
 		context.save();

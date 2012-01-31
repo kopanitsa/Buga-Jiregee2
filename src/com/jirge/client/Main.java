@@ -35,7 +35,7 @@ public class Main implements EntryPoint {
 		mFindGamePanel = new FindGamePanel(this);
 		mRoot.add(mFindGamePanel);
 
-		// step into the game ground.		
+		// Step into the game ground.		
 		startPlay();
 	}
 	
