@@ -26,16 +26,20 @@ import com.jirge.shared.message.UpdateBoardMessage;
 public class GameGroundPanel extends HorizontalPanel {
 
 	private static final String PIXEL = "px";
+	private static final int GAMEBOARD_MARGIN = 35;
 	private static final int GAMEBOARD_BLOCKWIDTH = 75;
 	private static final int GAMEBOARD_BLOCKHEIGHT = 75;
 	private static final int GAMEBOARD_WIDTH = GAMEBOARD_BLOCKWIDTH*4;
 	private static final int GAMEBOARD_HEIGHT = GAMEBOARD_BLOCKHEIGHT*8;
+	private static final int GAMEPANEL_WIDTH = GAMEBOARD_WIDTH + GAMEBOARD_MARGIN*2;
+	private static final int GAMEPANEL_HEIGHT = GAMEBOARD_HEIGHT + GAMEBOARD_MARGIN*2;
+
 	private static final int SIDEBOARD_WIDTH = 100;
 	private static final int SIDEBOARD_HEIGHT = 180;
 
 	public static final int GAMEGROUND_SPACE = 10;
-	public static final int GAMEGROUND_WIDTH = GAMEGROUND_SPACE*4 + GAMEBOARD_WIDTH + SIDEBOARD_WIDTH;
-	public static final int GAMEGROUND_HEIGHT = GAMEGROUND_SPACE*2 + GAMEBOARD_HEIGHT;
+	public static final int GAMEGROUND_WIDTH = GAMEGROUND_SPACE*4 + GAMEPANEL_WIDTH + SIDEBOARD_WIDTH;
+	public static final int GAMEGROUND_HEIGHT = GAMEGROUND_SPACE*2 + GAMEPANEL_HEIGHT;
 
     private GameServiceAsync asyncServiceHandler;
     private AsyncCallback <Boolean> movePlayerCallback;
@@ -58,18 +62,18 @@ public class GameGroundPanel extends HorizontalPanel {
 		setSize(Integer.toString(GAMEGROUND_WIDTH), Integer.toString(GAMEGROUND_HEIGHT));
 		
 	    VerticalPanel gameBoardPanel = new VerticalPanel();
-	    gameBoardPanel.setSize(Integer.toString(GAMEBOARD_WIDTH), Integer.toString(GAMEBOARD_HEIGHT));
+	    gameBoardPanel.setSize(Integer.toString(GAMEPANEL_WIDTH), Integer.toString(GAMEPANEL_HEIGHT));
 	    add(gameBoardPanel);
 
 		canvas = Canvas.createIfSupported();
-		canvas.setWidth(Integer.toString(GAMEBOARD_WIDTH) + PIXEL);
-		canvas.setHeight(Integer.toString(GAMEBOARD_HEIGHT) + PIXEL);
-		canvas.setCoordinateSpaceWidth(GAMEBOARD_WIDTH);
-		canvas.setCoordinateSpaceHeight(GAMEBOARD_HEIGHT);
+		canvas.setWidth(Integer.toString(GAMEPANEL_WIDTH) + PIXEL);
+		canvas.setHeight(Integer.toString(GAMEPANEL_HEIGHT) + PIXEL);
+		canvas.setCoordinateSpaceWidth(GAMEPANEL_WIDTH);
+		canvas.setCoordinateSpaceHeight(GAMEPANEL_HEIGHT);
 		context = canvas.getContext2d();
 		gameBoardPanel.add(canvas);
 
-		gameBoard = new GameBoard(new Point(0, 0), GAMEBOARD_BLOCKWIDTH, GAMEBOARD_BLOCKHEIGHT);
+		gameBoard = new GameBoard(new Point(GAMEBOARD_MARGIN, GAMEBOARD_MARGIN), GAMEBOARD_BLOCKWIDTH, GAMEBOARD_BLOCKHEIGHT);
 		gameBoard.refreshAnimate(context);
 
 	    VerticalPanel dogCountPanel = new VerticalPanel();
