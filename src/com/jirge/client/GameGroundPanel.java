@@ -213,6 +213,7 @@ public class GameGroundPanel extends HorizontalPanel {
 	}
 
 	private void turnChanged(TurnChangedMessage msg) {
+		GWT.log("turnChanged() : currentPlayerIndex " + String.valueOf(msg.getPlayerType()) );
 		int[] movablePieces = msg.getMovablePieces();
 		refreshAccessiblePositions(movablePieces);
 		setPlayTurnOn();

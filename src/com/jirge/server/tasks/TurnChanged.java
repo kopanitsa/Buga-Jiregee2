@@ -33,8 +33,9 @@ public class TurnChanged implements Deferred.Deferrable {
 			}
 		}
 		int playerIndex = game.getCurrentPlayerIndex();
-		Player player = game.getPlayers().get(playerIndex);
+		Player player = game.getPlayers().get(playerIndex);		
+		int playerType = player.getType();
 		
-		PushServer.sendMessage(player, new TurnChangedMessage(movableIndexes));
+		PushServer.sendMessage(player, new TurnChangedMessage(playerType, movableIndexes));
 	}
 }
