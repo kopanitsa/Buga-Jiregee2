@@ -163,8 +163,8 @@ public class GameGroundPanel extends HorizontalPanel {
 		};
 	}
 
-	private void palyerMove(int from, int to) {
-		GWT.log("palyerMove() called from, to " + String.valueOf(from) + ", " + String.valueOf(from));
+	private void playerMove(int from, int to) {
+		GWT.log("playerMove() called from, to " + String.valueOf(from) + ", " + String.valueOf(from));
 		asyncServiceHandler.movePiece(from, to, movePlayerCallback);
 	}
 	
@@ -192,9 +192,6 @@ public class GameGroundPanel extends HorizontalPanel {
 			break;
 
 		case NEW_PLAYER:
-			break;
-
-		case STEP_OCCURRED:
 			break;
 
 		case GAME_END:
@@ -241,7 +238,7 @@ public class GameGroundPanel extends HorizontalPanel {
 			if (getValidPostions().size() == 2) {
 				GWT.log("getValidPostions().size() " + String.valueOf(getValidPostions().size()));
 				setPlayTurnOff();
-				palyerMove(getValidPostions().get(0).intValue(), getValidPostions().get(1).intValue());
+				playerMove(getValidPostions().get(0).intValue(), getValidPostions().get(1).intValue());
 				getValidPostions().clear();
 			}
 		}
