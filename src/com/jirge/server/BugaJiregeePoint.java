@@ -73,7 +73,7 @@ public class BugaJiregeePoint implements Serializable {
 	}
 
 	public void setPath(int direction, BugaJiregeePoint point) {
-		if (direction >= 0 && direction < NUM_OF_DIRECTIONS) {
+		if (point != null && (direction >= 0 && direction < NUM_OF_DIRECTIONS)) {
 			this.paths.put(new Integer(direction), point);
 		}
 	}
