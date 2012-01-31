@@ -30,7 +30,6 @@ public class PushServer {
 
   private static final Logger logger = Logger.getLogger(PushServer.class.getName());
   private static final Method dummyMethod = getDummyMethod();
-  private static final String APP_KEY_PREFIX = "jirge-";
   private static SerializationPolicy serializationPolicy = createPushSerializationPolicy();
 
   public static void sendMessage(List<Player> players, Message msg) {
