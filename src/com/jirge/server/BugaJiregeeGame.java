@@ -136,13 +136,17 @@ public class BugaJiregeeGame implements Serializable {
 						int direction = directionInt.intValue();
 						BugaJiregeePoint nextPoint = piecePos.getPaths().get(directionInt);
 //						if (nextPoint.getPiece() == null) {
-						if (getPieceByPointIndex(nextPoint.getIndex()) == null) {
+						BugaJiregeePiece nextPiece = getPieceByPointIndex(nextPoint.getIndex());
+						if (nextPiece == null) {
 							accessiblePoints.add(nextPoint);
-						} else if (piece.getType() == BugaJiregeePiece.TYPE_DEER) {
-							BugaJiregeePoint nextNextPoint = nextPoint.getPath(direction);
-//							if (nextNextPoint != null && nextNextPoint.getPiece() == null) {
-							if (nextNextPoint != null && getPieceByPointIndex(nextNextPoint.getIndex()) == null) {
-								accessiblePoints.add(nextNextPoint);
+						} else {
+							if (piece.getType() == BugaJiregeePiece.TYPE_DEER 
+									&& nextPiece.getType() == BugaJiregeePiece.TYPE_DOG) {
+								BugaJiregeePoint nextNextPoint = nextPoint.getPath(direction);
+//								if (nextNextPoint != null && nextNextPoint.getPiece() == null) {
+								if (nextNextPoint != null && getPieceByPointIndex(nextNextPoint.getIndex()) == null) {
+									accessiblePoints.add(nextNextPoint);
+								}
 							}
 						}
 					}
