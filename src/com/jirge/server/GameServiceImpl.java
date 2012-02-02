@@ -88,7 +88,7 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 			defer(new StartGame(gameId), getTaskOptions().countdownMillis(1000));
 
 			// Initialize game
-			startGame(game);
+			initGame(game);
 
 			List<UpdateBoardInfo> updateBoardInfo = game
 					.getLastUpdateBoardInfo();
@@ -144,6 +144,7 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		try {
 			tx.begin();
 			moveSuccess = game.movePiece(piece, toPoint);
+			pm.makePersistent(game);
 			tx.commit();
 		} catch (ConcurrentModificationException ex) {
 			// Someone else tried to modify the game at the same time.
@@ -319,13 +320,14 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		return newGameId;
 	}
 
-	private boolean startGame(BugaJiregeeGame game) {
+	private boolean initGame(BugaJiregeeGame game) {
 		PersistenceManager pm = JdoUtil.getPm();
 		Transaction tx = pm.currentTransaction();
 
 		try {
 			tx.begin();
 			game.start();
+			pm.makePersistent(game);
 			tx.commit();
 		} catch (ConcurrentModificationException ex) {
 			// Someone else tried to modify the game at the same time.
