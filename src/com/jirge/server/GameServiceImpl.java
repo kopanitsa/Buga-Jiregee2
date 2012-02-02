@@ -85,16 +85,17 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 
 		if (game.getPlayers().size() >= MAX_PLAYERS) {
 			// Start game
-			defer(new StartGame(gameId), getTaskOptions().countdownMillis(3000));
+			defer(new StartGame(gameId), getTaskOptions().countdownMillis(1000));
 
 			// Initialize game
-			game.start();
+			startGame(game);
+
 			List<UpdateBoardInfo> updateBoardInfo = game
 					.getLastUpdateBoardInfo();
 			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
-					.countdownMillis(4000));
+					.countdownMillis(2000));
 
-			defer(new TurnChanged(game), getTaskOptions().countdownMillis(5000));
+			defer(new TurnChanged(game), getTaskOptions().countdownMillis(3000));
 		}
 
 		Date estimatedStartTime = new Date(game.getTimeCreated().getTime() + 60);
@@ -107,8 +108,15 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		mLogger.warning("getAccessiblePoints start, index=" + index);
 		BugaJiregeeGame game = getGameForSession();
 		BugaJiregeePiece piece = game.getPieceByPointIndex(index);
+
+		if (piece == null) {
+			mLogger.severe("getAccessiblePoints error : piece is null");
+			return new int[0];
+		}
+
 		List<BugaJiregeePoint> pointList = game.getAccessiblePoints(piece);
 		int[] accessiblePoints = new int[pointList.size()];
+
 		mLogger.warning("getAccessiblePoints, size=" + accessiblePoints.length);
 		for (int i = 0; i < accessiblePoints.length; i++) {
 			accessiblePoints[i] = pointList.get(i).getIndex();
@@ -118,30 +126,36 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 	}
 
 	public Boolean movePiece(int fromIndex, int toIndex) {
+		mLogger.warning("movePiece start, fromIndex=" + fromIndex
+				+ ", toIndex=" + toIndex);
 		BugaJiregeeGame game = getGameForSession();
 		BugaJiregeePiece piece = game.getPieceByPointIndex(fromIndex);
 		BugaJiregeePoint toPoint = game.getBoard().getPoint(toIndex);
 
-		Boolean moveSuccess = game.movePiece(piece, toPoint);
+		if (piece == null) {
+			mLogger.severe("movePiece error : piece is null");
+			return new Boolean(false);
+		}
+
+		Boolean moveSuccess = false;
+		PersistenceManager pm = JdoUtil.getPm();
+		Transaction tx = pm.currentTransaction();
+
+		try {
+			tx.begin();
+			moveSuccess = game.movePiece(piece, toPoint);
+			tx.commit();
+		} catch (ConcurrentModificationException ex) {
+			// Someone else tried to modify the game at the same time.
+			// Just let the client retry.
+			return new Boolean(false);
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
 
 		if (moveSuccess) {
-			PersistenceManager pm = JdoUtil.getPm();
-			Transaction tx = pm.currentTransaction();
-
-			try {
-				tx.begin();
-				pm.makePersistent(game);
-				tx.commit();
-			} catch (ConcurrentModificationException ex) {
-				// Someone else tried to modify the game at the same time.
-				// Just let the client retry.
-				return new Boolean(false);
-			} finally {
-				if (tx.isActive()) {
-					tx.rollback();
-				}
-			}
-			
 			List<UpdateBoardInfo> updateBoardInfo = game
 					.getLastUpdateBoardInfo();
 			defer(new UpdateBoard(updateBoardInfo, game), getTaskOptions()
@@ -182,7 +196,8 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 		mLogger.warning("[Game number]filter:" + c.size());
 		if (gameId > 1) {
 			long prevGameId = gameId - 1;
-			Query qp = pm.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
+			Query qp = pm
+					.newQuery(BugaJiregeeGame.class, "id == " + prevGameId);
 			Collection cp = (Collection) qp.execute();
 			mLogger.warning("[Game number]filter:" + cp.size());
 		}
@@ -302,5 +317,25 @@ public class GameServiceImpl extends RemoteServiceServlet implements
 			}
 		}
 		return newGameId;
+	}
+
+	private boolean startGame(BugaJiregeeGame game) {
+		PersistenceManager pm = JdoUtil.getPm();
+		Transaction tx = pm.currentTransaction();
+
+		try {
+			tx.begin();
+			game.start();
+			tx.commit();
+		} catch (ConcurrentModificationException ex) {
+			// Someone else tried to modify the game at the same time.
+			// Just let the client retry.
+			return false;
+		} finally {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+		}
+		return true;
 	}
 }
