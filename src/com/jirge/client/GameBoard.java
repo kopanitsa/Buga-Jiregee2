@@ -6,11 +6,11 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
 public class GameBoard {
-	private ArrayList<FieldBlock> fieldBlocksContainer = new ArrayList<FieldBlock>(0);
-	private ArrayList<Position> groundPositionsArrayList = new ArrayList<Position>(0);
+	final private ArrayList<FieldBlock> fieldBlocksContainer = new ArrayList<FieldBlock>(0);
+	final private ArrayList<Position> groundPositionsArrayList = new ArrayList<Position>(0);
 
-	private int blkw, blkh;
-	private double ltx, lty; 
+	final private int blkw, blkh;
+	final private double ltx, lty; 
 
     GameBoard(final Point topLeftPoint, int blockWidth, int blockHeight) {
     	this.ltx = topLeftPoint.getX();
@@ -165,6 +165,7 @@ public class GameBoard {
 
     public void refreshAnimate(final Context2d context) {
     	drawGameBoard(context);
+
     	for (Position position : getGroundPositionsArrayList()) {
     		position.refreshAnimate(context);
     	}

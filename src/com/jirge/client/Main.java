@@ -87,7 +87,7 @@ public class Main implements EntryPoint {
 
 	private final void startPlay() {
 		mGroundPanel = new GameGroundPanel();
-		mRoot.add(mGroundPanel, 200, 270);
+		mRoot.add(mGroundPanel, 200, 265);
 		mGroundPanel.setSize(Integer.toString(GameGroundPanel.GAMEGROUND_WIDTH), Integer.toString(GameGroundPanel.GAMEGROUND_HEIGHT));
 		mGroundPanel.setVisible(true);
 	}

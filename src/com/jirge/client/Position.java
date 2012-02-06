@@ -9,6 +9,7 @@ public class Position {
 
 	public Position(Point point) {
 		this.position = point;
+		this.animate = null;
 	}
 
 	synchronized public void addAnimate(final Context2d context, final ImageElement animate) {

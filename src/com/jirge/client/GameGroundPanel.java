@@ -93,7 +93,7 @@ public class GameGroundPanel extends HorizontalPanel {
 
 					// Stack into the valid position array.
 					validateClickedPosition(new Point(Integer.MAX_VALUE, Integer.MAX_VALUE));
-				}				
+				}
 			}
 		});
 		dogCountPanel.add(dogButton);
@@ -206,14 +206,13 @@ public class GameGroundPanel extends HorizontalPanel {
 		List<UpdateBoardInfo> updateInfo = msg.getUpdateInfo();
 		for (UpdateBoardInfo info : updateInfo) {
 			GWT.log("player type : " + info.playerType + ", before : " + info.beforePos + ", after : " + info.afterPos);
-
 			updateGroundPositions(info);
 			refreshGameBoard(context);
 		}
 	}
 
 	private void turnChanged(TurnChangedMessage msg) {
-		GWT.log("turnChanged() : currentPlayerIndex " + String.valueOf(msg.getPlayerType()) );
+		GWT.log("turnChanged() : msg.getPlayerType() " + String.valueOf(msg.getPlayerType()) );
 		int[] movablePieces = msg.getMovablePieces();
 		refreshAccessiblePositions(movablePieces);
 		setPlayTurnOn();
@@ -222,8 +221,8 @@ public class GameGroundPanel extends HorizontalPanel {
 	private void validateClickedPosition(final Point clickPoint) {
 		int index = gameBoard.pickPlayPosition(clickPoint);
        	GWT.log("validateClickedPosition() : clicked position " + String.valueOf(index) );
-    	GWT.log("validateClickedPosition() : size " + String.valueOf(getValidPostions().size()));       
-    	
+    	GWT.log("validateClickedPosition() : size " + String.valueOf(getValidPostions().size()));
+
 		if (getAccessiblePositins().contains(new Integer(index))) {
 			if (!getValidPostions().contains(new Integer(index))) {
 				getValidPostions().add(new Integer(index));
@@ -267,7 +266,9 @@ public class GameGroundPanel extends HorizontalPanel {
     	if (info.beforePos == 36) {
         	gameBoard.animateIn(info.afterPos, context, element);
     	} else {
-			gameBoard.animateOut(info.beforePos, context);
+    		if (info.beforePos != 0) {
+    			gameBoard.animateOut(info.beforePos, context);
+    		}
 			if (info.afterPos != 0) {
 		    	gameBoard.animateIn(info.afterPos, context, element);    		
 			}
@@ -288,7 +289,7 @@ public class GameGroundPanel extends HorizontalPanel {
 
     // Redraw entire canvas and positions.
     private void refreshGameBoard(Context2d context) {
-    	context.clearRect(0, 0, GAMEBOARD_WIDTH, GAMEBOARD_HEIGHT);
-		gameBoard.refreshAnimate(context);
+    	context.clearRect(0, 0, GAMEPANEL_WIDTH, GAMEPANEL_HEIGHT);
+    	gameBoard.refreshAnimate(context);
     }
 }
