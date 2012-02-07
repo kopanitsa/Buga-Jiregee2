@@ -164,7 +164,7 @@ public class GameGroundPanel extends HorizontalPanel {
 	}
 
 	private void playerMove(int from, int to) {
-		GWT.log("playerMove() called from, to " + String.valueOf(from) + ", " + String.valueOf(from));
+		GWT.log("playerMove() called from, to " + String.valueOf(from) + ", " + String.valueOf(to));
 		asyncServiceHandler.movePiece(from, to, movePlayerCallback);
 	}
 	

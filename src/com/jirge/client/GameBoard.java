@@ -97,9 +97,9 @@ public class GameBoard {
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*4, lty+blkh*6)));
 
     	// Steep valley.
-       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*7)));
-       	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*6)));
-     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*7)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw, lty+blkh*7)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*7)));
+    	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*3, lty+blkh*7)));
     	groundPositionsArrayList.add(new Position(new Point(ltx+blkw*2, lty+blkh*8)));
 
     	// Nest of dog.
