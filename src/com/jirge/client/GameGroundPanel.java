@@ -46,8 +46,9 @@ public class GameGroundPanel extends HorizontalPanel {
     private AsyncCallback <int[]> getPositionsCallback;
  
     private GameBoard gameBoard;
-	private final ArrayList<Integer> accessiblePositionArrayList = new ArrayList<Integer>(0);
-	private final ArrayList<Integer> validPositinsArrayList = new ArrayList<Integer>(0);
+	private final ArrayList<Integer> accessibleFromPositionList = new ArrayList<Integer>(0);
+	private final ArrayList<Integer> accessibleToPositionList = new ArrayList<Integer>(0);
+	private final ArrayList<Integer> validPositinsList = new ArrayList<Integer>(0);
 	private volatile boolean isPlayTurn = false;
 
 	private Canvas canvas;
@@ -145,7 +146,12 @@ public class GameGroundPanel extends HorizontalPanel {
 
 			public void onSuccess(Boolean result) {
 				GWT.log("movePlayerCallback() successed");
-		    	setPlayTurnOn();
+				if (result) {
+					getValidPostions().clear();
+				} else {
+					getValidPostions().remove(1);
+					setPlayTurnOn();
+				}
 		    }
 		};
 
@@ -154,12 +160,12 @@ public class GameGroundPanel extends HorizontalPanel {
 				GWT.log("getPositionsCallback() failed : " + caught.getMessage());
 		    }
 
-		    public void onSuccess(int[] results) {
-		    	GWT.log("getPositionsCallback() successed");
+			public void onSuccess(int[] results) {
+				GWT.log("getPositionsCallback() successed");
 
-		    	refreshAccessiblePositions(results);
-		    	setPlayTurnOn();
-		    }
+				refreshAccessiblePositions(results, getAccessibleToPositins());
+				setPlayTurnOn();
+			}
 		};
 	}
 
@@ -214,51 +220,51 @@ public class GameGroundPanel extends HorizontalPanel {
 	private void turnChanged(TurnChangedMessage msg) {
 		GWT.log("turnChanged() : msg.getPlayerType() " + String.valueOf(msg.getPlayerType()) );
 		int[] movablePieces = msg.getMovablePieces();
-		refreshAccessiblePositions(movablePieces);
+		refreshAccessiblePositions(movablePieces, getAccessibleFromPositins());
 		setPlayTurnOn();
 	}
 
 	private void validateClickedPosition(final Point clickPoint) {
-		int index = gameBoard.pickPlayPosition(clickPoint);
+		Integer index = new Integer(gameBoard.pickPlayPosition(clickPoint));
        	GWT.log("validateClickedPosition() : clicked position " + String.valueOf(index) );
     	GWT.log("validateClickedPosition() : size " + String.valueOf(getValidPostions().size()));
 
-		if (getAccessiblePositins().contains(new Integer(index))) {
-			if (!getValidPostions().contains(new Integer(index))) {
-				getValidPostions().add(new Integer(index));
-			}
-
-			if (getValidPostions().size() == 1) {
-				GWT.log("getValidPostions().size() " + String.valueOf(getValidPostions().size()));
+		if (getAccessibleFromPositins().contains(index)) {
+			GWT.log("validateClickedPosition() : From position is set");
+			if (! getValidPostions().contains(index)) {
+				getValidPostions().clear();
+				getValidPostions().add(index);
 				setPlayTurnOff();
 				getNextPositions(getValidPostions().get(0).intValue());
-				return;
 			}
-
-			if (getValidPostions().size() == 2) {
-				GWT.log("getValidPostions().size() " + String.valueOf(getValidPostions().size()));
-				setPlayTurnOff();
-				playerMove(getValidPostions().get(0).intValue(), getValidPostions().get(1).intValue());
-				getValidPostions().clear();
-			}
+		} else if ((getAccessibleToPositins().contains(index)) &&
+				(getValidPostions().size() == 1)) {
+			GWT.log("validateClickedPosition() : To position is set");
+			setPlayTurnOff();
+			getValidPostions().add(index);
+			playerMove(getValidPostions().get(0).intValue(), getValidPostions().get(1).intValue());
 		}
 	}
 
-	synchronized private void refreshAccessiblePositions(int[] accessibles) {
+	synchronized private void refreshAccessiblePositions(int[] accessibles, ArrayList<Integer> targetArray) {
 		GWT.log("refreshAccessiblePositions : accessibles size " + String.valueOf(accessibles.length));
 
-		getAccessiblePositins().clear();
+		targetArray.clear();
 		for (int i=0; i<accessibles.length; i++) {
-			getAccessiblePositins().add(new Integer(accessibles[i]));
+			targetArray.add(new Integer(accessibles[i]));
 		}
 	}
 	
 	synchronized private ArrayList<Integer> getValidPostions() {
-		return validPositinsArrayList;
+		return validPositinsList;
 	}
 
-	synchronized private ArrayList<Integer> getAccessiblePositins() {
-		return accessiblePositionArrayList;
+	synchronized private ArrayList<Integer> getAccessibleFromPositins() {
+		return accessibleFromPositionList;
+	}
+
+	synchronized private ArrayList<Integer> getAccessibleToPositins() {
+		return accessibleToPositionList;
 	}
 
     private void updateGroundPositions(UpdateBoardInfo info) {
